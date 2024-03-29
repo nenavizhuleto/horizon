@@ -1,10 +1,10 @@
-package detection_test
+package protocol_test
 
 import (
 	"time"
 
-	. "github.com/nenavizhuleto/horizon/protocol/detection"
-	"github.com/nenavizhuleto/horizon/protocol/detection/video"
+	. "github.com/nenavizhuleto/horizon/protocol"
+	"github.com/nenavizhuleto/horizon/protocol/video"
 )
 
 func TestObjectDetection() {

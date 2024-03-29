@@ -1,7 +1,7 @@
-package detection_test
+package protocol_test
 
 import (
-	. "github.com/nenavizhuleto/horizon/protocol/detection"
+	. "github.com/nenavizhuleto/horizon/protocol"
 )
 
 var (

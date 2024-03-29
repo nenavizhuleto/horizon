@@ -1,6 +1,6 @@
-package detection
+package protocol
 
-import "github.com/nenavizhuleto/horizon/protocol/detection/video"
+import "github.com/nenavizhuleto/horizon/protocol/video"
 
 type Motion struct {
 	// Video stream or file

@@ -1,9 +1,7 @@
-package analysis
+package protocol
 
 import (
 	"time"
-
-	. "github.com/nenavizhuleto/horizon/protocol/detection"
 )
 
 type Trigger Detection
