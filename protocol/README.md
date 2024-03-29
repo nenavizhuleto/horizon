@@ -207,6 +207,35 @@ Detection{
 `Producer` relates to concrete implementation of a `Sensor`.
 Where `Sensor` is generalized interpretation of the thing
 
+#### Object
+
+To `Object` detection fall following kinds of image processing:
+
+- Pattern recognition (license plates, pose)
+- Object recognition (person, face, weapon, etc.)
+- Image classification (fire, smoke)
+
+This kind of detections are made by neural networks
+
+> Should neural network be considered as sensor of some sort?
+
+Actually, I would argue with "YES", but maybe this topic needs further investigations. So let's think of neural network as another sensor.
+
+```go
+// Kind of sensor that used in object detection
+const NeuralSensor = SensorType("neural")
+```
+
+> What information do we need in `Object Detection`?
+
+We need all information from base detection above and following ones:
+
+- What class of object was detected? (arbitrary value aka. person, car, bicycle, etc.)
+- Where it was detected? (bounding box inside image/frame)
+- How confident sensor is about this detection? (floating point value between 0.0 and 1.0)
+
+
+
 ## Output
 
 - Analysis

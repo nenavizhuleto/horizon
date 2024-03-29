@@ -27,6 +27,9 @@ const (
 	// I don't know yet, but believe me.
 	VideoSensor = SensorType("video")
 
+	// Kind of sensor that used in object detection
+	NeuralSensor = SensorType("neural")
+
 	// Accelerometers
 	// Light
 	// Sound
