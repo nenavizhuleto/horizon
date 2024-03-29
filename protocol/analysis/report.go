@@ -10,6 +10,6 @@ const (
 )
 
 type Report struct {
-	UserData any
-	Severity Severity
+	UserData any      `json:"user_data"`
+	Severity Severity `json:"severity"`
 }

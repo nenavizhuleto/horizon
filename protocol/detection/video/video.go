@@ -2,22 +2,22 @@ package video
 
 type Source struct {
 	// Uniform Resource Identifier
-	URI string
+	URI string `json:"uri"`
 
 	// Width(X) and Height(Y) of the source, on which consumers could rely on
-	Dimensions Dimensions
+	Dimensions Dimensions `json:"dimensions"`
 }
 
 // Might used image.Point, but implemented for better marshal control
 type Dimensions struct {
-	Width  int
-	Height int
+	Width  int `json:"width"`
+	Height int `json:"height"`
 }
 
 // Might used image.Rectangle, but will not
 type Position struct {
-	X      int
-	Y      int
-	Width  int
-	Height int
+	X      int `json:"x"`
+	Y      int `json:"y"`
+	Width  int `json:"width"`
+	Height int `json:"height"`
 }

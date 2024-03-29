@@ -5,7 +5,7 @@ import (
 )
 
 type Analysis struct {
-	Event     Event
-	Detection Detection
-	Report    Report
+	Event     Event     `json:"event"`
+	Detection Detection `json:"detection"`
+	Report    Report    `json:"report"`
 }

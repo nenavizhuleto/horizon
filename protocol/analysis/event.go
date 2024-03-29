@@ -9,10 +9,10 @@ import (
 type Trigger Detection
 
 type Event struct {
-	ID      string
-	Trigger Trigger
+	ID      string  `json:"id"`
+	Trigger Trigger `json:"trigger"`
 
-	Start    time.Time
-	End      time.Time
-	Duration time.Duration
+	Start    time.Time     `json:"start"`
+	End      time.Time     `json:"end"`
+	Duration time.Duration `json:"duration"`
 }
