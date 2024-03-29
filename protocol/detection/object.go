@@ -15,4 +15,8 @@ type Object struct {
 	//
 	// Floating-point number: 0.0 <= x <= 1.0
 	Confidence float32
+
+	// We also might want to have
+	// additional information alongise with detection
+	UserData any
 }

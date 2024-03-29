@@ -4,6 +4,7 @@ import (
 	"time"
 
 	. "github.com/nenavizhuleto/horizon/protocol/detection"
+	"github.com/nenavizhuleto/horizon/protocol/detection/video"
 )
 
 func TestMotionDetection() {
@@ -16,14 +17,14 @@ func TestMotionDetection() {
 		Type:      MotionDetection,
 		Timestamp: time.Now(),
 		Value: Motion{
-			Source: VideoSource{
+			Source: video.Source{
 				URI: "rtsp://localhost:8554/camera",
-				Dimensions: VideoDimensions{
+				Dimensions: video.Dimensions{
 					Width:  1920,
 					Height: 1080,
 				},
 			},
-			Position: &VideoPosition{
+			Position: &video.Position{
 				X:      200,
 				Y:      400,
 				Width:  500,
