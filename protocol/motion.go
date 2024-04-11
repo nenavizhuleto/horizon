@@ -7,5 +7,5 @@ type Motion struct {
 	Source video.Source `json:"source"`
 
 	// Position where motion is detected (optional)
-	Position *video.Position `json:"position,omitempty"`
+	Position video.Position `json:"position,omitempty"`
 }
