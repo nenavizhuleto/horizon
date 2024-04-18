@@ -1,6 +1,8 @@
 package protocol
 
-import "time"
+import (
+	"time"
+)
 
 type DetectionType string
 

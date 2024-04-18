@@ -24,7 +24,7 @@ func TestMotionDetection() {
 					Height: 1080,
 				},
 			},
-			Position: &video.Position{
+			Position: video.Position{
 				X:      200,
 				Y:      400,
 				Width:  500,

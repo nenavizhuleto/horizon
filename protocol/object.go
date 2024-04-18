@@ -3,6 +3,10 @@ package protocol
 import "github.com/nenavizhuleto/horizon/protocol/video"
 
 type Object struct {
+
+	// From where object was detected
+	Source video.Source `json:"source"`
+
 	// Arbitrary value
 	//
 	// Example: person, car, ball, bycicle
