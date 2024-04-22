@@ -1,7 +1,10 @@
 package protocol
 
 import (
+	"encoding/json"
 	"time"
+
+	"github.com/nenavizhuleto/horizon/protocol/extractor"
 )
 
 type DetectionType string
@@ -35,4 +38,43 @@ type Detection struct {
 	// We should be able to pass any data to consumers.
 	// So also we need some way to extract this value in sensor intended way.
 	Value any `json:"value"`
+}
+
+func (d *Detection) UnmarshalJSON(data []byte) error {
+	type DTO struct {
+		Producer  Sensor          `json:"producer"`
+		Type      DetectionType   `json:"detection_type"`
+		Timestamp time.Time       `json:"timestamp"`
+		Value     json.RawMessage `json:"value"`
+	}
+
+	var dto DTO
+	if err := json.Unmarshal(data, &dto); err != nil {
+		return err
+	}
+
+	var (
+		value any
+		err   error
+	)
+
+	switch dto.Type {
+	case ObjectDetection:
+		value, err = extractor.Raw[Object](dto.Value)
+	case MotionDetection:
+		value, err = extractor.Raw[Motion](dto.Value)
+	case ValueDetection:
+		value, err = extractor.Raw[Value](dto.Value)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	d.Producer = dto.Producer
+	d.Type = dto.Type
+	d.Timestamp = dto.Timestamp
+	d.Value = value
+
+	return nil
 }

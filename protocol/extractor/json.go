@@ -17,3 +17,9 @@ func JSON[T any](from any) (T, error) {
 
 	return ret, nil
 }
+
+func Raw[T any](from json.RawMessage) (T, error) {
+	var v T
+	err := json.Unmarshal(from, &v)
+	return v, err
+}
