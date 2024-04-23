@@ -44,6 +44,8 @@ type Sensor struct {
 
 type ISensor interface {
 	Sensor() Sensor
+	SetID(id string)
+	SetName(name string)
 }
 
 type IMotionSensor interface {
@@ -61,6 +63,14 @@ type IObjectSensor interface {
 type IValueSensor interface {
 	ISensor
 	NewValueDetection(values ...Value) Detection
+}
+
+func (s *Sensor) SetID(id string) {
+	s.ID = id
+}
+
+func (s *Sensor) SetName(name string) {
+	s.Name = name
 }
 
 func (s Sensor) Sensor() Sensor {
