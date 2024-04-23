@@ -120,7 +120,7 @@ func (s Sensor) NewValueDetection(values ...Value) Detection {
 }
 
 func NewMotionSensor(id, name string) IMotionSensor {
-	return Sensor{
+	return &Sensor{
 		ID:   id,
 		Name: name,
 		Type: Motionsensor,
@@ -128,7 +128,7 @@ func NewMotionSensor(id, name string) IMotionSensor {
 }
 
 func NewObjectSensor(id, name string) IObjectSensor {
-	return Sensor{
+	return &Sensor{
 		ID:   id,
 		Name: name,
 		Type: ObjectSensor,
