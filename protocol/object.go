@@ -24,3 +24,11 @@ type Object struct {
 	// additional information alongise with detection
 	UserData any `json:"user_data"`
 }
+
+func (o *Object) SetSource(src video.Source) {
+	o.Source = src
+}
+
+func (o *Object) SetUserData(userdata any) {
+	o.UserData = userdata
+}

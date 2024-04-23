@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/nenavizhuleto/horizon/protocol/extractor"
@@ -40,16 +41,66 @@ type Detection struct {
 	Value any `json:"value"`
 }
 
-func (d *Detection) UnmarshalJSON(data []byte) error {
-	type DTO struct {
-		Producer  Sensor          `json:"producer"`
-		Type      DetectionType   `json:"detection_type"`
-		Timestamp time.Time       `json:"timestamp"`
-		Value     json.RawMessage `json:"value"`
+func (d Detection) IsMotion() bool {
+	return d.Type == MotionDetection
+}
+
+func (d Detection) Motions() (motions []Motion) {
+	if d.IsMotion() {
+		motions = d.Value.([]Motion)
 	}
 
-	var dto DTO
-	if err := json.Unmarshal(data, &dto); err != nil {
+	return
+}
+
+func (d Detection) IsObject() bool {
+	return d.Type == ObjectDetection
+}
+
+func (d Detection) Objects() (objects []Object) {
+	if d.IsObject() {
+		objects = d.Value.([]Object)
+	}
+
+	return
+}
+
+func (d Detection) IsValue() bool {
+	return d.Type == ValueDetection
+}
+
+func (d Detection) Values() (values []Value) {
+	if d.IsValue() {
+		values = d.Value.([]Value)
+	}
+
+	return
+}
+
+func (d *Detection) SetTimestamp(ts time.Time) {
+	d.Timestamp = ts
+}
+
+func (d *Detection) Range(foreach func(i int, v any) bool) {
+	values, ok := d.Value.([]any)
+	if ok {
+		for i, value := range values {
+			if !foreach(i, value) {
+				break
+			}
+		}
+	}
+}
+
+func (d *Detection) UnmarshalJSON(data []byte) error {
+	type DetectionJSON Detection
+
+	valueJSON := &json.RawMessage{}
+	detectionJSON := DetectionJSON{
+		Value: valueJSON,
+	}
+
+	if err := json.Unmarshal(data, &detectionJSON); err != nil {
 		return err
 	}
 
@@ -58,22 +109,22 @@ func (d *Detection) UnmarshalJSON(data []byte) error {
 		err   error
 	)
 
-	switch dto.Type {
+	switch detectionJSON.Type {
 	case ObjectDetection:
-		value, err = extractor.Raw[Object](dto.Value)
+		value, err = extractor.Raw[[]Object](*valueJSON)
 	case MotionDetection:
-		value, err = extractor.Raw[Motion](dto.Value)
+		value, err = extractor.Raw[[]Motion](*valueJSON)
 	case ValueDetection:
-		value, err = extractor.Raw[Value](dto.Value)
+		value, err = extractor.Raw[[]Value](*valueJSON)
+	default:
+		return fmt.Errorf("unsupported detection type: %s", detectionJSON.Type)
 	}
 
 	if err != nil {
 		return err
 	}
 
-	d.Producer = dto.Producer
-	d.Type = dto.Type
-	d.Timestamp = dto.Timestamp
+	*d = Detection(detectionJSON)
 	d.Value = value
 
 	return nil

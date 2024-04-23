@@ -1,18 +1,19 @@
 package protocol_test
 
 import (
+	"testing"
 	"time"
 
 	. "github.com/nenavizhuleto/horizon/protocol"
 	"github.com/nenavizhuleto/horizon/protocol/video"
 )
 
-func TestMotionDetection() {
+func TestMotionDetection(t *testing.T) {
 	_ = Detection{
 		Producer: Sensor{
 			ID:   "xxxx-xxxx-xxxx-xxxx",
 			Name: "my-beloved-camera",
-			Type: VideoSensor,
+			Type: Motionsensor,
 		},
 		Type:      MotionDetection,
 		Timestamp: time.Now(),

@@ -1,18 +1,19 @@
 package protocol_test
 
 import (
+	"testing"
 	"time"
 
 	. "github.com/nenavizhuleto/horizon/protocol"
 	"github.com/nenavizhuleto/horizon/protocol/video"
 )
 
-func TestObjectDetection() {
+func TestObjectDetection(t *testing.T) {
 	_ = Detection{
 		Producer: Sensor{
 			ID:   "xxxx-xxxx-xxxx-xxxx",
 			Name: "license-plate-recognition",
-			Type: NeuralSensor,
+			Type: ObjectSensor,
 		},
 		Type:      ObjectDetection,
 		Timestamp: time.Now(),
