@@ -1,7 +1,23 @@
 package protocol
 
-type Analysis struct {
-	Event     Event     `json:"event"`
+type Severity string
+
+const (
+	SeverityInfo    = Severity("info")
+	SeverityWarning = Severity("warning")
+	SeverityPanic   = Severity("panic")
+)
+
+type AnalysisMessage struct {
+	ProducerMessage[Producer]
+	Severity Severity `json:"severity"`
+}
+
+type EventAnalysisMessage struct {
+	EventMessage
 	Detection Detection `json:"detection"`
-	Report    Report    `json:"report"`
+}
+
+type DetectionAnalysisMessage struct {
+	DetectionMessage[Detection]
 }

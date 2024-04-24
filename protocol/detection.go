@@ -1,131 +1,107 @@
 package protocol
 
-import (
-	"encoding/json"
-	"fmt"
-	"time"
+import "time"
 
-	"github.com/nenavizhuleto/horizon/protocol/extractor"
-)
+type Detection interface{}
 
-type DetectionType string
-
-// Primitive detection types
-const (
-	// Detect motion on video
-	MotionDetection = DetectionType("motion")
-
-	// Detect object on image/frame
-	ObjectDetection = DetectionType("object")
-
-	// Detect value on analog/digital sensor input
-	ValueDetection = DetectionType("value")
-)
-
-type Detection struct {
-	// Which sensor made detection
-	Producer Sensor `json:"producer"`
-
-	// Although each sensor has it's own type
-	// and associated detection types with it,
-	// it would be nice to pass detection type further,
-	// for better API
-	Type DetectionType `json:"detection_type"`
-
-	// When did detection happened
-	Timestamp time.Time `json:"timestamp"`
-
-	// As detection value may vary based on different sensor types,
-	// We should be able to pass any data to consumers.
-	// So also we need some way to extract this value in sensor intended way.
-	Value any `json:"value"`
+type DetectionMessage[T any] struct {
+	ProducerMessage[T]
+	Timestamp  time.Time   `json:"timestamp"`
+	Detections []Detection `json:"detections"`
 }
 
-func (d Detection) IsMotion() bool {
-	return d.Type == MotionDetection
-}
-
-func (d Detection) Motions() (motions []Motion) {
-	if d.IsMotion() {
-		motions = d.Value.([]Motion)
-	}
-
-	return
-}
-
-func (d Detection) IsObject() bool {
-	return d.Type == ObjectDetection
-}
-
-func (d Detection) Objects() (objects []Object) {
-	if d.IsObject() {
-		objects = d.Value.([]Object)
-	}
-
-	return
-}
-
-func (d Detection) IsValue() bool {
-	return d.Type == ValueDetection
-}
-
-func (d Detection) Values() (values []Value) {
-	if d.IsValue() {
-		values = d.Value.([]Value)
-	}
-
-	return
-}
-
-func (d *Detection) SetTimestamp(ts time.Time) {
-	d.Timestamp = ts
-}
-
-func (d *Detection) Range(foreach func(i int, v any) bool) {
-	values, ok := d.Value.([]any)
-	if ok {
-		for i, value := range values {
-			if !foreach(i, value) {
-				break
-			}
-		}
+func NewDetectionMessage[T any](t MessageType, producer T, ts time.Time) DetectionMessage[T] {
+	return DetectionMessage[T]{
+		ProducerMessage: NewProducerMessage(t, producer),
+		Timestamp:       ts,
 	}
 }
 
-func (d *Detection) UnmarshalJSON(data []byte) error {
-	type DetectionJSON Detection
+type Motion struct {
+	// Video stream or file
+	Source Source `json:"source"`
 
-	valueJSON := &json.RawMessage{}
-	detectionJSON := DetectionJSON{
-		Value: valueJSON,
+	// Position where motion is detected
+	Position Position `json:"position,omitempty"`
+}
+
+type MotionDetectionMessage struct {
+	DetectionMessage[MotionProducer]
+	Detections []Motion `json:"detections"`
+}
+
+func NewMotionDetectionMessage(producer MotionProducer, ts time.Time, motions ...Motion) MotionDetectionMessage {
+	return MotionDetectionMessage{
+		DetectionMessage: NewDetectionMessage(MessageMotionDetection, producer, ts),
+		Detections:       motions,
 	}
+}
 
-	if err := json.Unmarshal(data, &detectionJSON); err != nil {
-		return err
+type Object struct {
+	// Arbitrary value
+	//
+	// Example: person, car, ball, bycicle
+	Class string `json:"class"`
+
+	// Where object was detected
+	BoundingBox Position `json:"bounding_box"`
+
+	// How confident this detection is
+	//
+	// Floating-point number: 0.0 <= x <= 1.0
+	Confidence float32 `json:"confidence"`
+
+	// We also might want to have
+	// additional information alongise with detection
+	UserData any `json:"user_data"`
+}
+
+type ObjectDetectionMessage struct {
+	DetectionMessage[ObjectProducer]
+	Detections []Object `json:"detections"`
+}
+
+type FrameLocation struct {
+	Partition int32  `json:"partition"`
+	Offset    int64  `json:"offset"`
+	Topic     string `json:"topic"`
+}
+
+type ObjectDetectionExtOptions struct {
+	FrameLocation *FrameLocation `json:"frame_location,omitempty"`
+}
+
+type ObjectDetectionExtMessage struct {
+	ObjectDetectionExtOptions
+	DetectionMessage[ObjectProducer]
+	Detections []Object `json:"detections"`
+}
+
+func NewObjectDetectionMessage(producer ObjectProducer, ts time.Time, objects ...Object) ObjectDetectionMessage {
+	return ObjectDetectionMessage{
+		DetectionMessage: NewDetectionMessage(MessageObjectDetection, producer, ts),
+		Detections:       objects,
 	}
+}
 
-	var (
-		value any
-		err   error
-	)
-
-	switch detectionJSON.Type {
-	case ObjectDetection:
-		value, err = extractor.Raw[[]Object](*valueJSON)
-	case MotionDetection:
-		value, err = extractor.Raw[[]Motion](*valueJSON)
-	case ValueDetection:
-		value, err = extractor.Raw[[]Value](*valueJSON)
-	default:
-		return fmt.Errorf("unsupported detection type: %s", detectionJSON.Type)
+func NewObjectDetectionExtMessage(producer ObjectProducer, ts time.Time, options ObjectDetectionExtOptions, objects ...Object) ObjectDetectionExtMessage {
+	return ObjectDetectionExtMessage{
+		DetectionMessage:          NewDetectionMessage(MessageObjectDetectionExt, producer, ts),
+		Detections:                objects,
+		ObjectDetectionExtOptions: options,
 	}
+}
 
-	if err != nil {
-		return err
+type Value any
+
+type ValueDetectionMessage struct {
+	DetectionMessage[ValueProducer]
+	Detections []Value `json:"detections"`
+}
+
+func NewValueDetectionMessage(producer ValueProducer, ts time.Time, values ...Value) ValueDetectionMessage {
+	return ValueDetectionMessage{
+		DetectionMessage: NewDetectionMessage(MessageValueDetection, producer, ts),
+		Detections:       values,
 	}
-
-	*d = Detection(detectionJSON)
-	d.Value = value
-
-	return nil
 }

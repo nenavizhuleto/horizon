@@ -4,32 +4,19 @@ import (
 	"time"
 )
 
-type Trigger Detection
+type EventMessage struct {
+	ProducerMessage[Producer]
+	ID string `json:"id"`
+}
 
-type Event struct {
-	ID      string  `json:"id"`
-	Trigger Trigger `json:"trigger"`
+type EventStartMessage struct {
+	EventMessage
+	Trigger Detection `json:"trigger"`
+	Start   time.Time `json:"start"`
+}
 
-	Start    time.Time     `json:"start"`
+type EventEndMessage struct {
+	EventMessage
 	End      time.Time     `json:"end"`
 	Duration time.Duration `json:"duration"`
-}
-
-func NewEvent(id string, trigger Trigger) Event {
-	return Event{
-		ID:       id,
-		Trigger:  trigger,
-		Start:    time.Time{},
-		End:      time.Time{},
-		Duration: 0,
-	}
-}
-
-func (e *Event) StartNow() {
-	e.Start = time.Now()
-}
-
-func (e *Event) EndNow() {
-	e.End = time.Now()
-	e.Duration = e.End.Sub(e.Start)
 }
