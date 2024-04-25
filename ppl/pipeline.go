@@ -6,7 +6,9 @@ type pipeline struct {
 }
 
 func (p *pipeline) Message(ctx *Context, message any) {
-	p.start.Message(ctx, message)
+	if p.start != nil {
+		p.start.Message(ctx, message)
+	}
 }
 
 func (p *pipeline) Next(next Elm) {
@@ -16,6 +18,10 @@ func (p *pipeline) Next(next Elm) {
 }
 
 func NewPipeline(elms ...Elm) Elm {
+	if len(elms) == 0 {
+		return &pipeline{}
+	}
+
 	if len(elms) == 1 {
 		return &pipeline{
 			start: elms[0],
