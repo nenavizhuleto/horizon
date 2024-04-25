@@ -59,13 +59,6 @@ func (h *detection_filter) Message(ctx *ppl.Context, message any) {
 		for _, object := range detection.Objects {
 			h.objects.Message(ctx, object)
 		}
-	case protocol.ObjectDetectionMessage:
-		if h.objects == nil {
-			break
-		}
-		for _, object := range detection.Objects {
-			h.objects.Message(ctx, object)
-		}
 	case protocol.ValueDetectionMessage:
 		if h.values == nil {
 			break

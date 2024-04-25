@@ -17,6 +17,7 @@ func main() {
 
 	person_msg := object_pdc.NewDetectionMessage(
 		time.Now(),
+		protocol.ObjectDetectionOptions{},
 		protocol.Object{
 			Class:      "person",
 			Confidence: 0.98,
@@ -26,6 +27,7 @@ func main() {
 
 	plate_msg := object_pdc.NewDetectionMessage(
 		time.Now(),
+		protocol.ObjectDetectionOptions{},
 		protocol.Object{
 			Class:      "plate",
 			Confidence: 0.54,
@@ -34,7 +36,7 @@ func main() {
 	)
 
 	value_msg := producer.NewValueDetectionProducer("", "").NewDetectionMessage(time.Now(), "fuck", "you")
-	motion_msg := producer.NewMotionDetectionProducer("", "").NewDetectionMessage(time.Now(), protocol.Motion{})
+	motion_msg := producer.NewMotionDetectionProducer("", "", protocol.MotionProducerOptions{}).NewDetectionMessage(time.Now(), protocol.Motion{})
 
 	ctx := ppl.NewContext(context.Background())
 
