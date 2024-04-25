@@ -49,28 +49,28 @@ func (h *detection_filter) Message(ctx *ppl.Context, message any) {
 		if h.motions == nil {
 			break
 		}
-		for _, motion := range detection.Detections {
+		for _, motion := range detection.Motions {
 			h.motions.Message(ctx, motion)
 		}
 	case protocol.ObjectDetectionMessage:
 		if h.objects == nil {
 			break
 		}
-		for _, object := range detection.Detections {
+		for _, object := range detection.Objects {
 			h.objects.Message(ctx, object)
 		}
-	case protocol.ObjectDetectionExtMessage:
+	case protocol.ObjectDetectionMessage:
 		if h.objects == nil {
 			break
 		}
-		for _, object := range detection.Detections {
+		for _, object := range detection.Objects {
 			h.objects.Message(ctx, object)
 		}
 	case protocol.ValueDetectionMessage:
 		if h.values == nil {
 			break
 		}
-		for _, value := range detection.Detections {
+		for _, value := range detection.Values {
 			h.values.Message(ctx, value)
 		}
 	}

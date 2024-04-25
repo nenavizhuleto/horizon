@@ -4,8 +4,7 @@ import "github.com/nenavizhuleto/horizon/protocol"
 
 // Used to produce valid frame messages
 type FrameProducer interface {
-	NewFrameMessage(frame protocol.Frame) protocol.FrameMessage
-	NewExtFrameMessage(frame protocol.Frame, dims protocol.Dimensions, regs ...protocol.Position) protocol.ExtFrameMessage
+	NewFrameMessage(frame protocol.Frame, options protocol.FrameMessageOptions) protocol.FrameMessage
 }
 
 type fp protocol.Producer
@@ -16,11 +15,6 @@ func NewFrameProducer(id, name string) FrameProducer {
 }
 
 // NewFrameMessage constructs new frame message
-func (p fp) NewFrameMessage(frame protocol.Frame) protocol.FrameMessage {
-	return protocol.NewFrameMessage(protocol.Producer(p), frame)
-}
-
-// NewFrameExtMessage constructs new frame message
-func (p fp) NewExtFrameMessage(frame protocol.Frame, dims protocol.Dimensions, regs ...protocol.Position) protocol.ExtFrameMessage {
-	return protocol.NewExtFrameMessage(protocol.Producer(p), frame, dims, regs...)
+func (p fp) NewFrameMessage(frame protocol.Frame, options protocol.FrameMessageOptions) protocol.FrameMessage {
+	return protocol.NewFrameMessage(protocol.Producer(p), frame, options)
 }

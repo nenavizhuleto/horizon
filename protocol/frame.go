@@ -2,29 +2,22 @@ package protocol
 
 type Frame []byte
 
+type FrameMessageOptions struct {
+	Dimensions *Dimensions `json:"dimensions,omitempty"`
+	Regions    *[]Position `json:"regions,omitempty"`
+}
+
 type FrameMessage struct {
+	FrameMessageOptions
 	ProducerMessage[Producer]
 	Frame Frame `json:"frame"`
 }
 
-type ExtFrameMessage struct {
-	FrameMessage
-	Dimensions Dimensions `json:"dimensions"`
-	Regions    []Position `json:"regions"`
-}
-
-func NewFrameMessage(producer Producer, frame Frame) FrameMessage {
+func NewFrameMessage(producer Producer, frame Frame, options FrameMessageOptions) FrameMessage {
 	return FrameMessage{
-		ProducerMessage: NewProducerMessage(MessageFrame, producer),
-		Frame:           frame,
-	}
-}
-
-func NewExtFrameMessage(producer Producer, frame Frame, dims Dimensions, regs ...Position) ExtFrameMessage {
-	return ExtFrameMessage{
-		FrameMessage: NewFrameMessage(producer, frame),
-		Dimensions:   dims,
-		Regions:      regs,
+		ProducerMessage:     NewProducerMessage(MessageFrame, producer),
+		Frame:               frame,
+		FrameMessageOptions: options,
 	}
 }
 

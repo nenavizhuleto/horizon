@@ -1,43 +1,8 @@
 package protocol
 
-type ProducerType string
-
 type Producer struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-// IP-Camera / Videofile
-type MotionProducer struct {
-	Producer
-}
-
-func NewMotionProducer(id, name string) MotionProducer {
-	return MotionProducer{
-		Producer: NewProducer(id, name),
-	}
-}
-
-// Neural networks
-type ObjectProducer struct {
-	Producer
-}
-
-func NewObjectProducer(id, name string) ObjectProducer {
-	return ObjectProducer{
-		Producer: NewProducer(id, name),
-	}
-}
-
-// Accelerometers, Light, Sound, Pressuer, Temperature, Humidity, Gas
-type ValueProducer struct {
-	Producer
-}
-
-func NewValueProducer(id, name string) ValueProducer {
-	return ValueProducer{
-		Producer: NewProducer(id, name),
-	}
 }
 
 type ProducerMessage[T any] struct {
