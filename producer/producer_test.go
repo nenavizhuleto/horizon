@@ -77,6 +77,31 @@ func Test_FrameProducer(t *testing.T) {
 	PrintMessage(t, msg)
 }
 
+func Test_EventProducer(t *testing.T) {
+	ep := producer.NewEventProducer(id, name, protocol.EventProducerOptions{
+		Camera: &protocol.Camera{
+			Name:  "my-camera",
+			Group: "my-camera-group",
+		},
+	})
+
+	event := protocol.Event{
+		ID:       "event-id",
+		Trigger:  protocol.Motion{},
+		Start:    time.Now(),
+		End:      time.Now(),
+		Duration: 10 * time.Second,
+	}
+
+	start_msg := ep.NewStartMessage(event.ID, event.Start, event.Trigger)
+	end_msg := ep.NewEndMessage(event.ID, event.End, event.Duration)
+
+	PrintMessage(t, start_msg)
+
+	PrintMessage(t, end_msg)
+
+}
+
 func Test_MotionAnalysisProducer(t *testing.T) {
 	manp := producer.NewMotionAnalysisProducer(id, name, protocol.AnalysisProducerOptions{
 		MotionProducerOptions: protocol.MotionProducerOptions{

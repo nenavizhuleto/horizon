@@ -12,8 +12,17 @@ type Event struct {
 	Duration time.Duration `json:"duration"`
 }
 
+type EventProducerOptions struct {
+	Camera *Camera `json:"camera,omitempty"`
+}
+
+type EventProducer struct {
+	EventProducerOptions
+	Producer
+}
+
 type EventMessage struct {
-	ProducerMessage[Producer]
+	ProducerMessage[EventProducer]
 	ID string `json:"id"`
 }
 
@@ -27,6 +36,36 @@ type EventEndMessage struct {
 	EventMessage
 	End      time.Time     `json:"end"`
 	Duration time.Duration `json:"duration"`
+}
+
+func NewEventProducer(id, name string, options EventProducerOptions) EventProducer {
+	return EventProducer{
+		Producer:             NewProducer(id, name),
+		EventProducerOptions: options,
+	}
+}
+
+func NewEventMessage(t MessageType, producer EventProducer, id string) EventMessage {
+	return EventMessage{
+		ProducerMessage: NewProducerMessage(t, producer),
+		ID:              id,
+	}
+}
+
+func NewEventStartMessage(producer EventProducer, id string, start time.Time, trigger Detection) EventStartMessage {
+	return EventStartMessage{
+		EventMessage: NewEventMessage(MessageEventStart, producer, id),
+		Start:        start,
+		Trigger:      trigger,
+	}
+}
+
+func NewEventEndMessage(producer EventProducer, id string, end time.Time, duration time.Duration) EventEndMessage {
+	return EventEndMessage{
+		EventMessage: NewEventMessage(MessageEventEnd, producer, id),
+		End:          end,
+		Duration:     duration,
+	}
 }
 
 type EventAnalysisReport struct {
