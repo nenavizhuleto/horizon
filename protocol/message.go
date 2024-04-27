@@ -24,11 +24,34 @@ const (
 type MessageHeaders map[string]any
 
 type Message struct {
+	MessageOptions
 	Type MessageType `json:"type"`
 }
 
-func new_message(t MessageType) Message {
+type Location struct {
+	Partition int32  `json:"partition"`
+	Offset    int64  `json:"offset"`
+	Topic     string `json:"topic"`
+}
+
+type FrameOptions struct {
+	Location   *Location   `json:"location"`
+	Dimensions *Dimensions `json:"dimensions,omitempty"`
+	Regions    *[]Position `json:"regions,omitempty"`
+}
+
+type EventOptions struct {
+	ID *string `json:"id,omitempty"`
+}
+
+type MessageOptions struct {
+	Frame *FrameOptions `json:"frame,omitempty"`
+	Event *EventOptions `json:"event,omitempty"`
+}
+
+func NewMessage(t MessageType, options ...MessageOptions) Message {
 	return Message{
-		Type: t,
+		Type:           t,
+		MessageOptions: Options(options...),
 	}
 }

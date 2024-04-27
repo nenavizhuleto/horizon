@@ -1,5 +1,7 @@
 package protocol
 
+import "time"
+
 type Severity string
 
 const (
@@ -8,33 +10,39 @@ const (
 	SeverityPanic   = Severity("panic")
 )
 
-type AnalysisProducerOptions struct {
-	MotionProducerOptions
-	EventID *string `json:"event_id,omitempty"`
+type AnalysisOptions struct {
 }
 
-type AnalysisProducer struct {
-	AnalysisProducerOptions
-	Producer
+type Analysis[D any] struct {
+	AnalysisOptions
+	Report    any `json:"report"`
+	Candidate D   `json:"candidate"`
 }
 
-func NewAnalysisProducer(id, name string, options AnalysisProducerOptions) AnalysisProducer {
-	return AnalysisProducer{
-		Producer:                NewProducer(id, name),
-		AnalysisProducerOptions: options,
+type MotionAnalysis = Analysis[Motion]
+type ObjectAnalysis = Analysis[Object]
+type ValueAnalysis = Analysis[Value]
+
+func NewAnalysis[D any](candidate D, report any, options ...AnalysisOptions) Analysis[D] {
+	return Analysis[D]{
+		Report:          report,
+		Candidate:       candidate,
+		AnalysisOptions: Options(options...),
 	}
 }
 
-type AnalysisMessage[T any] struct {
-	ProducerMessage[AnalysisProducer]
-	Severity Severity `json:"severity"`
-	Report   T        `json:"report"`
+type AnalysisMessage[C any] struct {
+	ProducerMessage[Producer]
+	Timestamp time.Time     `json:"timestamp"`
+	Severity  Severity      `json:"severity"`
+	Analyses  []Analysis[C] `json:"analyses"`
 }
 
-func NewAnalysisMessage[T any](t MessageType, producer AnalysisProducer, severity Severity, report T) AnalysisMessage[T] {
-	return AnalysisMessage[T]{
-		ProducerMessage: NewProducerMessage(t, producer),
+func NewAnalysisMessage[C any](producer Producer, ts time.Time, severity Severity, analyses []Analysis[C], options ...MessageOptions) AnalysisMessage[C] {
+	return AnalysisMessage[C]{
+		ProducerMessage: NewProducerMessage(MessageAnalysis, producer, options...),
+		Timestamp:       ts,
 		Severity:        severity,
-		Report:          report,
+		Analyses:        analyses,
 	}
 }

@@ -10,8 +10,21 @@ import (
 )
 
 var (
-	id   = "id"
-	name = "producer"
+	ts = time.Now()
+	p  = producer.NewMessageProducer("PRODUCER_ID", "PRODUCER_NAME", protocol.ProducerOptions{
+		Camera: &protocol.Camera{
+			Name:  "CAMERA_NAME",
+			Group: "CAMERA_GROUP",
+		},
+	})
+
+	event = protocol.Event{
+		ID:       "event-id",
+		Trigger:  protocol.Motion{},
+		Start:    ts,
+		End:      ts,
+		Duration: 10 * time.Second,
+	}
 )
 
 func PrintMessage(t *testing.T, msg any) {
@@ -25,76 +38,67 @@ func PrintMessage(t *testing.T, msg any) {
 }
 
 func Test_MotionDetectionProducer(t *testing.T) {
-
-	mdp := producer.NewMotionDetectionProducer(id, name, protocol.MotionProducerOptions{
-		Camera: &protocol.Camera{
-			Name:  "fuck",
-			Group: "you",
+	msg := p.NewMotionDetectionMessage(ts, []protocol.Motion{{}, {}}, protocol.MessageOptions{
+		Frame: &protocol.FrameOptions{
+			Regions: &[]protocol.Position{
+				{},
+				{},
+			},
+			Dimensions: &protocol.Dimensions{
+				Width:  1000,
+				Height: 2000,
+			},
 		},
 	})
-
-	msg := mdp.NewDetectionMessage(time.Now(), nil, protocol.Motion{}, protocol.Motion{})
 
 	PrintMessage(t, msg)
 }
 
 func Test_ObjectDetectionProducer(t *testing.T) {
-	odp := producer.NewObjectDetectionProducer(id, name)
 
-	msg := odp.NewDetectionMessage(time.Now(), protocol.ObjectDetectionOptions{
-		FrameLocation: &protocol.FrameLocation{
-			Partition: 123,
-			Offset:    332,
+	msg := p.NewObjectDetectionMessage(ts, []protocol.Object{
+		protocol.Object{Class: "person"}, protocol.Object{Class: "weapon"}, protocol.Object{Class: "plate"},
+	}, protocol.MessageOptions{
+		Frame: &protocol.FrameOptions{
+			Location: &protocol.Location{
+				Partition: 123,
+				Offset:    332,
+				Topic:     "TOPIC_NAME",
+			},
 		},
-	}, protocol.Object{Class: "person"}, protocol.Object{Class: "weapon"}, protocol.Object{Class: "plate"})
+	})
 
 	PrintMessage(t, msg)
 }
 
 func Test_ValueDetectionProducer(t *testing.T) {
-	vdp := producer.NewValueDetectionProducer(id, name)
-
-	msg := vdp.NewDetectionMessage(time.Now(), nil, 123, 555, "hello", "omh", true, struct{}{})
+	msg := p.NewValueDetectionMessage(ts, []protocol.Value{123, 555, "hello", "omh", true, struct{}{}})
 
 	PrintMessage(t, msg)
 }
 
 func Test_FrameProducer(t *testing.T) {
-	fp := producer.NewFrameProducer(id, name)
-
 	regs := []protocol.Position{
 		{X: 0, Y: 0, Width: 100, Height: 200},
 	}
 
-	msg := fp.NewFrameMessage([]byte{0, 1, 2, 4, 5, 6, 7, 8}, protocol.FrameMessageOptions{
-		Dimensions: &protocol.Dimensions{
-			Width:  100,
-			Height: 2333,
+	msg := p.NewFrameMessage([]byte{0, 1, 2, 4, 5, 6, 7, 8}, protocol.MessageOptions{
+		Frame: &protocol.FrameOptions{
+			Dimensions: &protocol.Dimensions{
+				Width:  100,
+				Height: 2333,
+			},
+			Regions: &regs,
 		},
-		Regions: &regs,
 	})
 
 	PrintMessage(t, msg)
 }
 
 func Test_EventProducer(t *testing.T) {
-	ep := producer.NewEventProducer(id, name, protocol.EventProducerOptions{
-		Camera: &protocol.Camera{
-			Name:  "my-camera",
-			Group: "my-camera-group",
-		},
-	})
 
-	event := protocol.Event{
-		ID:       "event-id",
-		Trigger:  protocol.Motion{},
-		Start:    time.Now(),
-		End:      time.Now(),
-		Duration: 10 * time.Second,
-	}
-
-	start_msg := ep.NewStartMessage(event.ID, event.Start, event.Trigger)
-	end_msg := ep.NewEndMessage(event.ID, event.End, event.Duration)
+	start_msg := p.NewEventStartMessage(event.ID, event.Start, event.Trigger)
+	end_msg := p.NewEventEndMessage(event.ID, event.End, event.Duration)
 
 	PrintMessage(t, start_msg)
 
@@ -103,24 +107,11 @@ func Test_EventProducer(t *testing.T) {
 }
 
 func Test_MotionAnalysisProducer(t *testing.T) {
-	manp := producer.NewMotionAnalysisProducer(id, name, protocol.AnalysisProducerOptions{
-		MotionProducerOptions: protocol.MotionProducerOptions{
-			Camera: &protocol.Camera{
-				Name:  "fuck",
-				Group: "you",
-			},
-		},
-	})
-
-	msg := manp.NewAnalysisMessage(protocol.SeverityWarning, protocol.MotionAnalysisReport{
-		Report: protocol.Report{
-			Producer:  protocol.NewProducer("new_id", "new_producer"),
-			Timestamp: time.Now(),
-		},
-		Motion: protocol.Motion{
-			Source: protocol.Source{
-				URI: "helloworld",
-			},
+	msg := p.NewMotionAnalysisMessage(ts, protocol.SeverityWarning, []protocol.MotionAnalysis{
+		protocol.NewAnalysis(protocol.Motion{}, "this motion is too fast"),
+	}, protocol.MessageOptions{
+		Event: &protocol.EventOptions{
+			ID: &event.ID,
 		},
 	})
 
@@ -128,26 +119,14 @@ func Test_MotionAnalysisProducer(t *testing.T) {
 }
 
 func Test_ObjectAnalysisProducer(t *testing.T) {
-	oanp := producer.NewObjectAnalysisProducer(id, name, protocol.AnalysisProducerOptions{})
-
-	msg := oanp.NewAnalysisMessage(protocol.SeverityPanic, protocol.ObjectAnalysisReport{
-		ObjectDetectionOptions: protocol.ObjectDetectionOptions{
-			FrameLocation: &protocol.FrameLocation{
-				Partition: 1234,
-				Offset:    1234,
-				Topic:     "topic",
-			},
-		},
-		Report: protocol.Report{
-			Producer:  protocol.NewProducer("", ""),
-			Timestamp: time.Now(),
-			UserData: map[string]any{
-				"name":      "john",
-				"direction": "forward",
-			},
-		},
-		Object: protocol.Object{
-			Class: "person",
+	msg := p.NewObjectAnalysisMessage(ts, protocol.SeverityPanic, []protocol.ObjectAnalysis{
+		protocol.NewAnalysis(protocol.Object{Class: "person"}, map[string]any{
+			"name":      "john",
+			"direction": "forward",
+		}),
+	}, protocol.MessageOptions{
+		Event: &protocol.EventOptions{
+			ID: &event.ID,
 		},
 	})
 
@@ -155,35 +134,11 @@ func Test_ObjectAnalysisProducer(t *testing.T) {
 }
 
 func Test_ValueAnalysisProducer(t *testing.T) {
-	vanp := producer.NewValueAnalysisProducer(id, name, protocol.AnalysisProducerOptions{})
-
-	msg := vanp.NewAnalysisMessage(protocol.SeverityInfo, protocol.ValueAnalysisReport{
-		Report: protocol.Report{
-			Producer:  protocol.NewProducer("", ""),
-			Timestamp: time.Now(),
-		},
-		Value: 1259812,
-	})
-
-	PrintMessage(t, msg)
-}
-
-func Test_EventAnalysisProducer(t *testing.T) {
-	eanp := producer.NewEventAnalysisProducer(id, name, protocol.AnalysisProducerOptions{})
-
-	msg := eanp.NewAnalysisMessage(protocol.SeverityPanic, protocol.EventAnalysisReport{
-		Report: protocol.Report{
-			Producer:  protocol.NewProducer("", ""),
-			Timestamp: time.Now(),
-		},
-		Event: protocol.Event{
-			ID: "event_id",
-		},
-		Detections: []protocol.Detection{
-			protocol.Motion{},
-			protocol.Object{},
-			123,
-			protocol.Motion{},
+	msg := p.NewValueAnalysisMessage(ts, protocol.SeverityInfo, []protocol.ValueAnalysis{
+		protocol.NewAnalysis(protocol.Value(125123), "number is odd"),
+	}, protocol.MessageOptions{
+		Event: &protocol.EventOptions{
+			ID: &event.ID,
 		},
 	})
 

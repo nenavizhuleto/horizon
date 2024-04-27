@@ -4,38 +4,8 @@ import "time"
 
 type Value Detection
 
-// Accelerometers, Light, Sound, Pressuer, Temperature, Humidity, Gas
-type ValueProducer struct {
-	Producer
-}
+type ValueDetectionMessage = DetectionMessage[Value]
 
-func NewValueProducer(id, name string) ValueProducer {
-	return ValueProducer{
-		Producer: NewProducer(id, name),
-	}
-}
-
-type ValueDetectionMessage struct {
-	DetectionMessage[ValueProducer]
-	Values []Value `json:"values"`
-}
-
-func NewValueDetectionMessage(producer ValueProducer, ts time.Time, values ...Value) ValueDetectionMessage {
-	return ValueDetectionMessage{
-		DetectionMessage: NewDetectionMessage(MessageValueDetection, producer, ts),
-		Values:           values,
-	}
-}
-
-type ValueAnalysisReport struct {
-	Report
-	Value Value `json:"value"`
-}
-
-func NewValueAnalysisMessage(producer AnalysisProducer, severity Severity, report ValueAnalysisReport) AnalysisMessage[ValueAnalysisReport] {
-	return AnalysisMessage[ValueAnalysisReport]{
-		ProducerMessage: NewProducerMessage(MessageAnalysisValueDetection, producer),
-		Severity:        severity,
-		Report:          report,
-	}
+func NewValueDetectionMessage(producer Producer, ts time.Time, values []Value, options ...MessageOptions) ValueDetectionMessage {
+	return NewDetectionMessage(MessageValueDetection, producer, ts, values, options...)
 }

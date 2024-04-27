@@ -12,17 +12,8 @@ type Event struct {
 	Duration time.Duration `json:"duration"`
 }
 
-type EventProducerOptions struct {
-	Camera *Camera `json:"camera,omitempty"`
-}
-
-type EventProducer struct {
-	EventProducerOptions
-	Producer
-}
-
 type EventMessage struct {
-	ProducerMessage[EventProducer]
+	ProducerMessage[Producer]
 	ID string `json:"id"`
 }
 
@@ -38,46 +29,25 @@ type EventEndMessage struct {
 	Duration time.Duration `json:"duration"`
 }
 
-func NewEventProducer(id, name string, options EventProducerOptions) EventProducer {
-	return EventProducer{
-		Producer:             NewProducer(id, name),
-		EventProducerOptions: options,
-	}
-}
-
-func NewEventMessage(t MessageType, producer EventProducer, id string) EventMessage {
+func NewEventMessage(t MessageType, producer Producer, id string, options ...MessageOptions) EventMessage {
 	return EventMessage{
-		ProducerMessage: NewProducerMessage(t, producer),
+		ProducerMessage: NewProducerMessage(t, producer, options...),
 		ID:              id,
 	}
 }
 
-func NewEventStartMessage(producer EventProducer, id string, start time.Time, trigger Detection) EventStartMessage {
+func NewEventStartMessage(producer Producer, id string, start time.Time, trigger Detection, options ...MessageOptions) EventStartMessage {
 	return EventStartMessage{
-		EventMessage: NewEventMessage(MessageEventStart, producer, id),
+		EventMessage: NewEventMessage(MessageEventStart, producer, id, options...),
 		Start:        start,
 		Trigger:      trigger,
 	}
 }
 
-func NewEventEndMessage(producer EventProducer, id string, end time.Time, duration time.Duration) EventEndMessage {
+func NewEventEndMessage(producer Producer, id string, end time.Time, duration time.Duration, options ...MessageOptions) EventEndMessage {
 	return EventEndMessage{
-		EventMessage: NewEventMessage(MessageEventEnd, producer, id),
+		EventMessage: NewEventMessage(MessageEventEnd, producer, id, options...),
 		End:          end,
 		Duration:     duration,
-	}
-}
-
-type EventAnalysisReport struct {
-	Report
-	Event      Event       `json:"event"`
-	Detections []Detection `json:"detections"`
-}
-
-func NewEventAnalysisMessage(producer AnalysisProducer, severity Severity, report EventAnalysisReport) AnalysisMessage[EventAnalysisReport] {
-	return AnalysisMessage[EventAnalysisReport]{
-		ProducerMessage: NewProducerMessage(MessageAnalysisEvent, producer),
-		Severity:        severity,
-		Report:          report,
 	}
 }

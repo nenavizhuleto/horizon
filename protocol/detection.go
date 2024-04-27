@@ -4,15 +4,16 @@ import "time"
 
 type Detection interface{}
 
-type DetectionMessage[T any] struct {
-	ProducerMessage[T]
-	Timestamp  time.Time   `json:"timestamp"`
-	Detections []Detection `json:"detections"`
+type DetectionMessage[D any] struct {
+	ProducerMessage[Producer]
+	Timestamp  time.Time `json:"timestamp"`
+	Detections []D       `json:"detections"`
 }
 
-func NewDetectionMessage[T any](t MessageType, producer T, ts time.Time) DetectionMessage[T] {
-	return DetectionMessage[T]{
-		ProducerMessage: NewProducerMessage(t, producer),
+func NewDetectionMessage[D any](t MessageType, producer Producer, ts time.Time, detections []D, options ...MessageOptions) DetectionMessage[D] {
+	return DetectionMessage[D]{
+		ProducerMessage: NewProducerMessage(t, producer, options...),
 		Timestamp:       ts,
+		Detections:      detections,
 	}
 }
