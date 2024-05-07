@@ -4,13 +4,13 @@ type Frame []byte
 
 type FrameMessage struct {
 	ProducerMessage[Producer]
-	Frame Frame `json:"frame"`
+	Data Frame `json:"data"`
 }
 
 func NewFrameMessage(producer Producer, frame Frame, options ...MessageOptions) FrameMessage {
 	return FrameMessage{
 		ProducerMessage: NewProducerMessage(MessageFrame, producer, options...),
-		Frame:           frame,
+		Data:            frame,
 	}
 }
 
