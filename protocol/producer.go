@@ -1,8 +1,9 @@
 package protocol
 
 type Camera struct {
-	Name  string `json:"name"`
-	Group string `json:"group"`
+	Name    string   `json:"name"`
+	Group   string   `json:"group"`
+	Modules []string `json:"modules"`
 }
 
 type ProducerOptions struct {
