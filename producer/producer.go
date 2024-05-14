@@ -19,6 +19,7 @@ type MessageProducer interface {
 
 	NewEventStartMessage(id string, start time.Time, trigger protocol.Detection, options ...protocol.MessageOptions) protocol.EventStartMessage
 	NewEventEndMessage(id string, end time.Time, duration time.Duration, options ...protocol.MessageOptions) protocol.EventEndMessage
+	NewEventMediaMessage(video string, images []protocol.EventImage, options ...protocol.MessageOptions) protocol.EventMediaMessage
 }
 
 type mp protocol.Producer
@@ -55,4 +56,7 @@ func (p mp) NewEventStartMessage(id string, start time.Time, trigger protocol.De
 }
 func (p mp) NewEventEndMessage(id string, end time.Time, duration time.Duration, options ...protocol.MessageOptions) protocol.EventEndMessage {
 	return protocol.NewEventEndMessage(protocol.Producer(p), id, end, duration, options...)
+}
+func (p mp) NewEventMediaMessage(video string, images []protocol.EventImage, options ...protocol.MessageOptions) protocol.EventMediaMessage {
+	return protocol.NewEventMediaMessage(protocol.Producer(p), video, images, options...)
 }

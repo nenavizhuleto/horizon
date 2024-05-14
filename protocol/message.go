@@ -12,6 +12,7 @@ const (
 	MessageEvent      = MessageType("event")
 	MessageEventStart = MessageType("event.start")
 	MessageEventEnd   = MessageType("event.end")
+	MessageEventMedia = MessageType("event.media")
 
 	MessageAnalysis                = MessageType("analysis")
 	MessageAnalysisDetection       = MessageType("analysis.detection")
