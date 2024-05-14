@@ -10,11 +10,7 @@ const (
 	SeverityPanic   = Severity("panic")
 )
 
-type AnalysisOptions struct {
-}
-
 type Analysis[D any] struct {
-	AnalysisOptions
 	Report    any `json:"report"`
 	Candidate D   `json:"candidate"`
 }
@@ -23,11 +19,10 @@ type MotionAnalysis = Analysis[Motion]
 type ObjectAnalysis = Analysis[Object]
 type ValueAnalysis = Analysis[Value]
 
-func NewAnalysis[D any](candidate D, report any, options ...AnalysisOptions) Analysis[D] {
+func NewAnalysis[D any](candidate D, report any) Analysis[D] {
 	return Analysis[D]{
-		Report:          report,
-		Candidate:       candidate,
-		AnalysisOptions: Options(options...),
+		Report:    report,
+		Candidate: candidate,
 	}
 }
 

@@ -45,9 +45,14 @@ type EventOptions struct {
 	ID *string `json:"id,omitempty"`
 }
 
+type AnalysisOptions struct {
+	ID *string `json:"id,omitempty"`
+}
+
 type MessageOptions struct {
-	Frame *FrameOptions `json:"frame,omitempty"`
-	Event *EventOptions `json:"event,omitempty"`
+	Frame    *FrameOptions    `json:"frame,omitempty"`
+	Event    *EventOptions    `json:"event,omitempty"`
+	Analysis *AnalysisOptions `json:"analysis,omitempty"`
 }
 
 func NewMessage(t MessageType, options ...MessageOptions) Message {
