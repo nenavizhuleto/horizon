@@ -2,27 +2,43 @@ package protocol
 
 import "time"
 
-type Object struct {
-	// Arbitrary value
-	//
-	// Example: person, car, ball, bycicle
-	Class string `json:"class"`
-
-	// Where object was detected
-	BoundingBox Position `json:"bounding_box"`
-
-	// How confident this detection is
-	//
-	// Floating-point number: 0.0 <= x <= 1.0
-	Confidence float32 `json:"confidence"`
-
-	// We also might want to have
-	// additional information alongise with detection
-	UserData any `json:"user_data"`
+type FrameLocation struct {
+	Partition int32  `json:"partition"`
+	Offset    int64  `json:"offset"`
+	Topic     string `json:"topic"`
 }
 
-type ObjectDetectionMessage = DetectionMessage[Object]
+type DetectionMessage[D any] struct {
+	Timestamp     time.Time     `json:"timestamp"`
+	FrameLocation FrameLocation `json:"frame_location"`
+	Detections    []D           `json:"detections"`
+}
 
-func NewObjectDetectionMessage(producer Producer, ts time.Time, objects []Object, options ...MessageOptions) ObjectDetectionMessage {
-	return NewDetectionMessage(MessageObjectDetection, producer, ts, objects, options...)
+type ObjectDetection struct {
+	ID          string   `json:"id"`
+	Class       string   `json:"class"`
+	BoundingBox Position `json:"bounding_box"`
+	Confidence  float32  `json:"confidence"`
+}
+
+type ObjectDetectionMessage DetectionMessage[ObjectDetection]
+
+func NewObjectDetectionMessage(producer Producer, message ObjectDetectionMessage) Message[ObjectDetectionMessage] {
+	return Message[ObjectDetectionMessage]{
+		Type:     MessageObjectDetection,
+		Producer: producer,
+		Body:     message,
+	}
+}
+
+type ObjectReport interface{}
+type ObjectAnalysis Analysis[ObjectReport, ObjectDetection]
+type ObjectAnalysisMessage AnalysisMessage[ObjectAnalysis]
+
+func NewObjectAnalysisMessage(producer Producer, message ObjectAnalysisMessage) Message[ObjectAnalysisMessage] {
+	return Message[ObjectAnalysisMessage]{
+		Type:     MessageObjectAnalysis,
+		Producer: producer,
+		Body:     message,
+	}
 }

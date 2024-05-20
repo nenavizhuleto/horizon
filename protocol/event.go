@@ -6,48 +6,34 @@ import (
 
 type Event struct {
 	ID       string        `json:"id"`
-	Trigger  Detection     `json:"trigger"`
 	Start    time.Time     `json:"start"`
 	End      time.Time     `json:"end"`
 	Duration time.Duration `json:"duration"`
 }
 
-type EventMessage struct {
-	ProducerMessage[Producer]
-	ID string `json:"id"`
-}
-
 type EventStartMessage struct {
-	EventMessage
-	Trigger Detection `json:"trigger"`
-	Start   time.Time `json:"start"`
+	ID    string    `json:"id"`
+	Start time.Time `json:"start"`
 }
 
 type EventEndMessage struct {
-	EventMessage
+	ID       string        `json:"id"`
 	End      time.Time     `json:"end"`
 	Duration time.Duration `json:"duration"`
 }
 
-func NewEventMessage(t MessageType, producer Producer, id string, options ...MessageOptions) EventMessage {
-	return EventMessage{
-		ProducerMessage: NewProducerMessage(t, producer, options...),
-		ID:              id,
+func NewEventStartMessage(producer Producer, message EventStartMessage) Message[EventStartMessage] {
+	return Message[EventStartMessage]{
+		Producer: producer,
+		Type:     MessageEventStart,
+		Body:     message,
 	}
 }
 
-func NewEventStartMessage(producer Producer, id string, start time.Time, trigger Detection, options ...MessageOptions) EventStartMessage {
-	return EventStartMessage{
-		EventMessage: NewEventMessage(MessageEventStart, producer, id, options...),
-		Start:        start,
-		Trigger:      trigger,
-	}
-}
-
-func NewEventEndMessage(producer Producer, id string, end time.Time, duration time.Duration, options ...MessageOptions) EventEndMessage {
-	return EventEndMessage{
-		EventMessage: NewEventMessage(MessageEventEnd, producer, id, options...),
-		End:          end,
-		Duration:     duration,
+func NewEventEndMessage(producer Producer, message EventEndMessage) Message[EventEndMessage] {
+	return Message[EventEndMessage]{
+		Producer: producer,
+		Type:     MessageEventEnd,
+		Body:     message,
 	}
 }

@@ -1,16 +1,21 @@
 package protocol
 
+import "time"
+
 type Frame []byte
 
 type FrameMessage struct {
-	ProducerMessage[Producer]
-	Data Frame `json:"data"`
+	Timestamp  time.Time  `json:"timestamp"`
+	Dimensions Dimensions `json:"dimensions,omitempty"`
+	Regions    []Position `json:"regions,omitempty"`
+	Data       Frame      `json:"data"`
 }
 
-func NewFrameMessage(producer Producer, frame Frame, options ...MessageOptions) FrameMessage {
-	return FrameMessage{
-		ProducerMessage: NewProducerMessage(MessageFrame, producer, options...),
-		Data:            frame,
+func NewFrameMessage(producer Producer, message FrameMessage) Message[FrameMessage] {
+	return Message[FrameMessage]{
+		Producer: producer,
+		Type:     MessageFrame,
+		Body:     message,
 	}
 }
 

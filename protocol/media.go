@@ -2,22 +2,28 @@ package protocol
 
 import "time"
 
-type EventImage struct {
+type Recording struct {
+	File string `json:"file"`
+	URL  string `json:"url"`
+}
+
+type Media struct {
 	AnalysisID string    `json:"analysis_id"`
 	Timestamp  time.Time `json:"timestamp"`
 	File       string    `json:"file"`
+	URL        string    `json:"url"`
 }
 
-type EventMediaMessage struct {
-	ProducerMessage[Producer]
-	Recording string       `json:"recording"`
-	Images    []EventImage `json:"images"`
+type MediaMessage struct {
+	EventID   string    `json:"event_id"`
+	Recording Recording `json:"recording"`
+	Media     []Media   `json:"media"`
 }
 
-func NewEventMediaMessage(producer Producer, video string, images []EventImage, options ...MessageOptions) EventMediaMessage {
-	return EventMediaMessage{
-		ProducerMessage: NewProducerMessage(MessageEventMedia, producer, options...),
-		Recording:       video,
-		Images:          images,
+func NewMediaMessage(producer Producer, message MediaMessage) Message[MediaMessage] {
+	return Message[MediaMessage]{
+		Producer: producer,
+		Type:     MessageMedia,
+		Body:     message,
 	}
 }

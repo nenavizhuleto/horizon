@@ -6,57 +6,114 @@ import (
 	"github.com/nenavizhuleto/horizon/protocol"
 )
 
-type MessageProducer interface {
-	NewObjectDetectionMessage(ts time.Time, objects []protocol.Object, options ...protocol.MessageOptions) protocol.ObjectDetectionMessage
-	NewMotionDetectionMessage(ts time.Time, motions []protocol.Motion, options ...protocol.MessageOptions) protocol.MotionDetectionMessage
-	NewValueDetectionMessage(ts time.Time, values []protocol.Value, options ...protocol.MessageOptions) protocol.ValueDetectionMessage
+type Producer protocol.Producer
 
-	NewFrameMessage(frame protocol.Frame, options ...protocol.MessageOptions) protocol.FrameMessage
-
-	NewObjectAnalysisMessage(ts time.Time, severity protocol.Severity, analyses []protocol.ObjectAnalysis, options ...protocol.MessageOptions) protocol.AnalysisMessage[protocol.Object]
-	NewMotionAnalysisMessage(ts time.Time, severity protocol.Severity, analyses []protocol.MotionAnalysis, options ...protocol.MessageOptions) protocol.AnalysisMessage[protocol.Motion]
-	NewValueAnalysisMessage(ts time.Time, severity protocol.Severity, analyses []protocol.ValueAnalysis, options ...protocol.MessageOptions) protocol.AnalysisMessage[protocol.Value]
-
-	NewEventStartMessage(id string, start time.Time, trigger protocol.Detection, options ...protocol.MessageOptions) protocol.EventStartMessage
-	NewEventEndMessage(id string, end time.Time, duration time.Duration, options ...protocol.MessageOptions) protocol.EventEndMessage
-	NewEventMediaMessage(video string, images []protocol.EventImage, options ...protocol.MessageOptions) protocol.EventMediaMessage
+func New(id, name, group string) Producer {
+	return Producer(protocol.Producer{
+		ID:      id,
+		Name:    name,
+		Group:   group,
+		Modules: make([]string, 0),
+	})
 }
 
-type mp protocol.Producer
-
-func NewMessageProducer(id, name string, options ...protocol.ProducerOptions) MessageProducer {
-	return mp(protocol.NewProducer(id, name, options...))
+func (p *Producer) AddModule(module string) {
+	p.Modules = append(p.Modules, module)
 }
 
-func (p mp) NewObjectDetectionMessage(ts time.Time, objects []protocol.Object, options ...protocol.MessageOptions) protocol.ObjectDetectionMessage {
-	return protocol.NewObjectDetectionMessage(protocol.Producer(p), ts, objects, options...)
-}
-func (p mp) NewMotionDetectionMessage(ts time.Time, motions []protocol.Motion, options ...protocol.MessageOptions) protocol.MotionDetectionMessage {
-	return protocol.NewMotionDetectionMessage(protocol.Producer(p), ts, motions, options...)
-}
-func (p mp) NewValueDetectionMessage(ts time.Time, values []protocol.Value, options ...protocol.MessageOptions) protocol.ValueDetectionMessage {
-	return protocol.NewValueDetectionMessage(protocol.Producer(p), ts, values, options...)
-}
-func (p mp) NewFrameMessage(frame protocol.Frame, options ...protocol.MessageOptions) protocol.FrameMessage {
-	return protocol.NewFrameMessage(protocol.Producer(p), frame, options...)
+func (p *Producer) SetModules(modules []string) {
+	p.Modules = modules
 }
 
-func (p mp) NewObjectAnalysisMessage(ts time.Time, severity protocol.Severity, analyses []protocol.ObjectAnalysis, options ...protocol.MessageOptions) protocol.AnalysisMessage[protocol.Object] {
-	return protocol.NewAnalysisMessage(protocol.Producer(p), ts, severity, analyses, options...)
-}
-func (p mp) NewMotionAnalysisMessage(ts time.Time, severity protocol.Severity, analyses []protocol.MotionAnalysis, options ...protocol.MessageOptions) protocol.AnalysisMessage[protocol.Motion] {
-	return protocol.NewAnalysisMessage(protocol.Producer(p), ts, severity, analyses, options...)
-}
-func (p mp) NewValueAnalysisMessage(ts time.Time, severity protocol.Severity, analyses []protocol.ValueAnalysis, options ...protocol.MessageOptions) protocol.AnalysisMessage[protocol.Value] {
-	return protocol.NewAnalysisMessage(protocol.Producer(p), ts, severity, analyses, options...)
+type MotionDetectionMessage = protocol.Message[protocol.MotionDetectionMessage]
+
+func (p Producer) NewMotionDetectionMessage(ts time.Time, motions []protocol.MotionDetection) MotionDetectionMessage {
+	return protocol.NewMotionDetectionMessage(protocol.Producer(p), protocol.MotionDetectionMessage{
+		Timestamp:  ts,
+		Detections: motions,
+	})
 }
 
-func (p mp) NewEventStartMessage(id string, start time.Time, trigger protocol.Detection, options ...protocol.MessageOptions) protocol.EventStartMessage {
-	return protocol.NewEventStartMessage(protocol.Producer(p), id, start, trigger, options...)
+type FrameMessage = protocol.Message[protocol.FrameMessage]
+
+func (p Producer) NewFrameMessage(ts time.Time, data protocol.Frame, dims protocol.Dimensions, regs []protocol.Position) FrameMessage {
+	return protocol.NewFrameMessage(protocol.Producer(p), protocol.FrameMessage{
+		Timestamp:  ts,
+		Dimensions: dims,
+		Regions:    regs,
+		Data:       data,
+	})
 }
-func (p mp) NewEventEndMessage(id string, end time.Time, duration time.Duration, options ...protocol.MessageOptions) protocol.EventEndMessage {
-	return protocol.NewEventEndMessage(protocol.Producer(p), id, end, duration, options...)
+
+type ObjectDetectionMessage = protocol.Message[protocol.ObjectDetectionMessage]
+
+func (p Producer) NewObjectDetectionMessage(ts time.Time, loc protocol.FrameLocation, objects []protocol.ObjectDetection) ObjectDetectionMessage {
+	return protocol.NewObjectDetectionMessage(protocol.Producer(p), protocol.ObjectDetectionMessage{
+		Timestamp:     ts,
+		Detections:    objects,
+		FrameLocation: loc,
+	})
 }
-func (p mp) NewEventMediaMessage(video string, images []protocol.EventImage, options ...protocol.MessageOptions) protocol.EventMediaMessage {
-	return protocol.NewEventMediaMessage(protocol.Producer(p), video, images, options...)
+
+type ObjectAnalysisMessage = protocol.Message[protocol.ObjectAnalysisMessage]
+
+func (p Producer) NewObjectAnalysisMessage(event_id string, ts time.Time, severity protocol.Severity, loc protocol.FrameLocation, analyses []protocol.ObjectAnalysis) ObjectAnalysisMessage {
+	return protocol.NewObjectAnalysisMessage(protocol.Producer(p), protocol.ObjectAnalysisMessage{
+		EventID:       event_id,
+		Timestamp:     ts,
+		Severity:      severity,
+		FrameLocation: loc,
+		Analyses:      analyses,
+	})
+}
+
+type PlateDetectionMessage = protocol.Message[protocol.PlateDetectionMessage]
+
+func (p Producer) NewPlateDetectionMessage(ts time.Time, loc protocol.FrameLocation, plates []protocol.PlateDetection) PlateDetectionMessage {
+	return protocol.NewPlateDetectionMessage(protocol.Producer(p), protocol.PlateDetectionMessage{
+		Timestamp:     ts,
+		Detections:    plates,
+		FrameLocation: loc,
+	})
+}
+
+type PlateAnalysisMessage = protocol.Message[protocol.PlateAnalysisMessage]
+
+func (p Producer) NewPlateAnalysisMessage(event_id string, ts time.Time, severity protocol.Severity, loc protocol.FrameLocation, analyses []protocol.PlateAnalysis) PlateAnalysisMessage {
+	return protocol.NewPlateAnalysisMessage(protocol.Producer(p), protocol.PlateAnalysisMessage{
+		EventID:       event_id,
+		Timestamp:     ts,
+		Severity:      severity,
+		FrameLocation: loc,
+		Analyses:      analyses,
+	})
+}
+
+type EventStartMessage = protocol.Message[protocol.EventStartMessage]
+
+func (p Producer) NewEventStartMessage(id string, start time.Time) EventStartMessage {
+	return protocol.NewEventStartMessage(protocol.Producer(p), protocol.EventStartMessage{
+		ID:    id,
+		Start: start,
+	})
+}
+
+type EventEndMessage = protocol.Message[protocol.EventEndMessage]
+
+func (p Producer) NewEventEndMessage(id string, end time.Time, duration time.Duration) EventEndMessage {
+	return protocol.NewEventEndMessage(protocol.Producer(p), protocol.EventEndMessage{
+		ID:       id,
+		End:      end,
+		Duration: duration,
+	})
+}
+
+type MediaMessage = protocol.Message[protocol.MediaMessage]
+
+func (p Producer) NewMediaMessage(event_id string, recording protocol.Recording, media []protocol.Media) MediaMessage {
+	return protocol.NewMediaMessage(protocol.Producer(p), protocol.MediaMessage{
+		EventID:   event_id,
+		Recording: recording,
+		Media:     media,
+	})
 }

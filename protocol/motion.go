@@ -2,16 +2,20 @@ package protocol
 
 import "time"
 
-type Motion struct {
-	// Video stream or file
-	Source Source `json:"source"`
-
-	// Position where motion is detected
+type MotionDetection struct {
+	Source   Source   `json:"source"`
 	Position Position `json:"position,omitempty"`
 }
 
-type MotionDetectionMessage = DetectionMessage[Motion]
+type MotionDetectionMessage struct {
+	Timestamp  time.Time         `json:"timestamp"`
+	Detections []MotionDetection `json:"detections"`
+}
 
-func NewMotionDetectionMessage(producer Producer, ts time.Time, motions []Motion, options ...MessageOptions) MotionDetectionMessage {
-	return NewDetectionMessage(MessageMotionDetection, producer, ts, motions, options...)
+func NewMotionDetectionMessage(producer Producer, message MotionDetectionMessage) Message[MotionDetectionMessage] {
+	return Message[MotionDetectionMessage]{
+		Producer: producer,
+		Type:     MessageMotionDetection,
+		Body:     message,
+	}
 }
