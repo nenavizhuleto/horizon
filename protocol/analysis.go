@@ -10,34 +10,24 @@ const (
 	SeverityPanic   = Severity("panic")
 )
 
-type Analysis[D any] struct {
-	Report    any `json:"report"`
-	Candidate D   `json:"candidate"`
+type Analysis[R, S any] struct {
+	ID      string `json:"id"`
+	Report  R      `json:"report"`
+	Subject S      `json:"subject"`
 }
 
-type MotionAnalysis = Analysis[Motion]
-type ObjectAnalysis = Analysis[Object]
-type ValueAnalysis = Analysis[Value]
-
-func NewAnalysis[D any](candidate D, report any) Analysis[D] {
-	return Analysis[D]{
-		Report:    report,
-		Candidate: candidate,
+func NewAnalysis[R, S any](id string, report R, subject S) Analysis[R, S] {
+	return Analysis[R, S]{
+		ID:      id,
+		Report:  report,
+		Subject: subject,
 	}
 }
 
-type AnalysisMessage[C any] struct {
-	ProducerMessage[Producer]
-	Timestamp time.Time     `json:"timestamp"`
-	Severity  Severity      `json:"severity"`
-	Analyses  []Analysis[C] `json:"analyses"`
-}
-
-func NewAnalysisMessage[C any](producer Producer, ts time.Time, severity Severity, analyses []Analysis[C], options ...MessageOptions) AnalysisMessage[C] {
-	return AnalysisMessage[C]{
-		ProducerMessage: NewProducerMessage(MessageAnalysis, producer, options...),
-		Timestamp:       ts,
-		Severity:        severity,
-		Analyses:        analyses,
-	}
+type AnalysisMessage[A any] struct {
+	EventID   string    `json:"event_id"`
+	Timestamp time.Time `json:"timestamp"`
+	Severity  Severity  `json:"severity"`
+	Location  Location  `json:"location"`
+	Analyses  []A       `json:"analyses"`
 }
