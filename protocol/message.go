@@ -16,7 +16,6 @@ const (
 
 	MessageObjectAnalysis = MessageType("analysis.object")
 	MessagePlateAnalysis  = MessageType("analysis.plate")
-	MessagePersonAnalysis = MessageType("analysis.person")
 )
 
 type Message[B any] struct {
