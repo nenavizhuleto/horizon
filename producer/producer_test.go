@@ -12,7 +12,7 @@ import (
 var (
 	ts  = time.Now()
 	p   = producer.New("PRODUCER_ID", "PRODUCER_NAME", "PRODUCER_GROUP")
-	loc = protocol.Location{
+	loc = protocol.FrameLocation{
 		Partition: 124,
 		Offset:    5123512,
 		Topic:     "TOPIC_NAME",

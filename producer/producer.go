@@ -47,45 +47,45 @@ func (p Producer) NewFrameMessage(ts time.Time, data protocol.Frame, dims protoc
 
 type ObjectDetectionMessage = protocol.Message[protocol.ObjectDetectionMessage]
 
-func (p Producer) NewObjectDetectionMessage(ts time.Time, loc protocol.Location, objects []protocol.ObjectDetection) ObjectDetectionMessage {
+func (p Producer) NewObjectDetectionMessage(ts time.Time, loc protocol.FrameLocation, objects []protocol.ObjectDetection) ObjectDetectionMessage {
 	return protocol.NewObjectDetectionMessage(protocol.Producer(p), protocol.ObjectDetectionMessage{
-		Timestamp:  ts,
-		Detections: objects,
-		Location:   loc,
+		Timestamp:     ts,
+		Detections:    objects,
+		FrameLocation: loc,
 	})
 }
 
 type ObjectAnalysisMessage = protocol.Message[protocol.ObjectAnalysisMessage]
 
-func (p Producer) NewObjectAnalysisMessage(event_id string, ts time.Time, severity protocol.Severity, loc protocol.Location, analyses []protocol.ObjectAnalysis) ObjectAnalysisMessage {
+func (p Producer) NewObjectAnalysisMessage(event_id string, ts time.Time, severity protocol.Severity, loc protocol.FrameLocation, analyses []protocol.ObjectAnalysis) ObjectAnalysisMessage {
 	return protocol.NewObjectAnalysisMessage(protocol.Producer(p), protocol.ObjectAnalysisMessage{
-		EventID:   event_id,
-		Timestamp: ts,
-		Severity:  severity,
-		Location:  loc,
-		Analyses:  analyses,
+		EventID:       event_id,
+		Timestamp:     ts,
+		Severity:      severity,
+		FrameLocation: loc,
+		Analyses:      analyses,
 	})
 }
 
 type PlateDetectionMessage = protocol.Message[protocol.PlateDetectionMessage]
 
-func (p Producer) NewPlateDetectionMessage(ts time.Time, loc protocol.Location, plates []protocol.PlateDetection) PlateDetectionMessage {
+func (p Producer) NewPlateDetectionMessage(ts time.Time, loc protocol.FrameLocation, plates []protocol.PlateDetection) PlateDetectionMessage {
 	return protocol.NewPlateDetectionMessage(protocol.Producer(p), protocol.PlateDetectionMessage{
-		Timestamp:  ts,
-		Detections: plates,
-		Location:   loc,
+		Timestamp:     ts,
+		Detections:    plates,
+		FrameLocation: loc,
 	})
 }
 
 type PlateAnalysisMessage = protocol.Message[protocol.PlateAnalysisMessage]
 
-func (p Producer) NewPlateAnalysisMessage(event_id string, ts time.Time, severity protocol.Severity, loc protocol.Location, analyses []protocol.PlateAnalysis) PlateAnalysisMessage {
+func (p Producer) NewPlateAnalysisMessage(event_id string, ts time.Time, severity protocol.Severity, loc protocol.FrameLocation, analyses []protocol.PlateAnalysis) PlateAnalysisMessage {
 	return protocol.NewPlateAnalysisMessage(protocol.Producer(p), protocol.PlateAnalysisMessage{
-		EventID:   event_id,
-		Timestamp: ts,
-		Severity:  severity,
-		Location:  loc,
-		Analyses:  analyses,
+		EventID:       event_id,
+		Timestamp:     ts,
+		Severity:      severity,
+		FrameLocation: loc,
+		Analyses:      analyses,
 	})
 }
 

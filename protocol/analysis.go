@@ -25,9 +25,9 @@ func NewAnalysis[R, S any](id string, report R, subject S) Analysis[R, S] {
 }
 
 type AnalysisMessage[A any] struct {
-	EventID   string    `json:"event_id"`
-	Timestamp time.Time `json:"timestamp"`
-	Severity  Severity  `json:"severity"`
-	Location  Location  `json:"location"`
-	Analyses  []A       `json:"analyses"`
+	EventID       string        `json:"event_id"`
+	Timestamp     time.Time     `json:"timestamp"`
+	Severity      Severity      `json:"severity"`
+	FrameLocation FrameLocation `json:"frame_location"`
+	Analyses      []A           `json:"analyses"`
 }

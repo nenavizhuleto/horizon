@@ -2,16 +2,16 @@ package protocol
 
 import "time"
 
-type Location struct {
+type FrameLocation struct {
 	Partition int32  `json:"partition"`
 	Offset    int64  `json:"offset"`
 	Topic     string `json:"topic"`
 }
 
 type DetectionMessage[D any] struct {
-	Timestamp  time.Time `json:"timestamp"`
-	Location   Location  `json:"location"`
-	Detections []D       `json:"detections"`
+	Timestamp     time.Time     `json:"timestamp"`
+	FrameLocation FrameLocation `json:"frame_location"`
+	Detections    []D           `json:"detections"`
 }
 
 type ObjectDetection struct {
