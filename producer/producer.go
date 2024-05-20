@@ -89,28 +89,6 @@ func (p Producer) NewPlateAnalysisMessage(event_id string, ts time.Time, severit
 	})
 }
 
-type PersonDetectionMessage = protocol.Message[protocol.PersonDetectionMessage]
-
-func (p Producer) NewPersonDetectionMessage(ts time.Time, loc protocol.Location, persons []protocol.PersonDetection) PersonDetectionMessage {
-	return protocol.NewPersonDetectionMessage(protocol.Producer(p), protocol.PersonDetectionMessage{
-		Timestamp:  ts,
-		Detections: persons,
-		Location:   loc,
-	})
-}
-
-type PersonAnalysisMessage = protocol.Message[protocol.PersonAnalysisMessage]
-
-func (p Producer) NewPersonAnalysisMessage(event_id string, ts time.Time, severity protocol.Severity, loc protocol.Location, analyses []protocol.PersonAnalysis) PersonAnalysisMessage {
-	return protocol.NewPersonAnalysisMessage(protocol.Producer(p), protocol.PersonAnalysisMessage{
-		EventID:   event_id,
-		Timestamp: ts,
-		Severity:  severity,
-		Location:  loc,
-		Analyses:  analyses,
-	})
-}
-
 type EventStartMessage = protocol.Message[protocol.EventStartMessage]
 
 func (p Producer) NewEventStartMessage(id string, start time.Time) EventStartMessage {

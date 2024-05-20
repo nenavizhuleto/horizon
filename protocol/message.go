@@ -7,7 +7,6 @@ const (
 
 	MessageObjectDetection = MessageType("detection.object")
 	MessagePlateDetection  = MessageType("detection.plate")
-	MessagePersonDetection = MessageType("detection.person")
 
 	MessageFrame = MessageType("frame")
 	MessageMedia = MessageType("media")

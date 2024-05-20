@@ -45,29 +45,18 @@ var (
 		},
 	}
 
-	persons = []protocol.PersonDetection{
-		{
-			BoundingBox: bbox,
-			Confidence:  0.14,
-		},
-		{
-			BoundingBox: bbox,
-			Confidence:  0.65,
-		},
-	}
-
 	objects = []protocol.ObjectDetection{
 		{
+			ID:          "e422664a-d910-4a75-905c-1fdff28cd876",
 			Class:       "car",
 			BoundingBox: bbox,
 			Confidence:  0.51,
-			UserData:    "white",
 		},
 		{
+			ID:          "ff74a087-5878-474c-9990-fb08b195a506",
 			Class:       "chair",
 			BoundingBox: bbox,
 			Confidence:  0.87,
-			UserData:    "wooden",
 		},
 	}
 
@@ -144,22 +133,6 @@ func Test_PlateAnalysisProducer(t *testing.T) {
 					},
 				},
 			},
-		},
-	})
-	PrintMessage(t, msg)
-}
-
-func Test_PersonDetectionProducer(t *testing.T) {
-	msg := p.NewPersonDetectionMessage(ts, loc, persons)
-	PrintMessage(t, msg)
-}
-
-func Test_PersonAnalysisProducer(t *testing.T) {
-	msg := p.NewPersonAnalysisMessage(event.ID, ts, protocol.SeverityPanic, loc, []protocol.PersonAnalysis{
-		{
-			ID:      "PERSON_ANALYSIS_ID",
-			Subject: persons[0],
-			Report:  "PERSON_REPORT",
 		},
 	})
 	PrintMessage(t, msg)

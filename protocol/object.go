@@ -15,10 +15,10 @@ type DetectionMessage[D any] struct {
 }
 
 type ObjectDetection struct {
+	ID          string   `json:"id"`
 	Class       string   `json:"class"`
 	BoundingBox Position `json:"bounding_box"`
 	Confidence  float32  `json:"confidence"`
-	UserData    any      `json:"user_data"`
 }
 
 type ObjectDetectionMessage DetectionMessage[ObjectDetection]
