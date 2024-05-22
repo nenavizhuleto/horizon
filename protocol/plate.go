@@ -25,19 +25,18 @@ type Vehicle struct {
 }
 
 type List struct {
-	ID       string    `json:"id"`
-	Name     string    `json:"name"`
-	Severity Severity  `json:"severity"`
-	Color    string    `json:"color"`
-	Vehicles []Vehicle `json:"vehicles,omitempty"`
+	ID       string   `json:"id"`
+	Name     string   `json:"name"`
+	Severity Severity `json:"severity"`
+	Color    string   `json:"color"`
 }
 
 type PlateReport []List
 type PlateAnalysis Analysis[PlateReport, PlateDetection]
-type PlateAnalysisMessage AnalysisMessage[PlateAnalysis]
+type PlateAnalysesMessage AnalysesMessage[PlateAnalysis]
 
-func NewPlateAnalysisMessage(producer Producer, message PlateAnalysisMessage) Message[PlateAnalysisMessage] {
-	return Message[PlateAnalysisMessage]{
+func NewPlateAnalysesMessage(producer Producer, message PlateAnalysesMessage) Message[PlateAnalysesMessage] {
+	return Message[PlateAnalysesMessage]{
 		Producer: producer,
 		Type:     MessagePlateAnalysis,
 		Body:     message,

@@ -95,9 +95,8 @@ func Test_ObjectDetectionProducer(t *testing.T) {
 }
 
 func Test_ObjectAnalysisProducer(t *testing.T) {
-	msg := p.NewObjectAnalysisMessage(event.ID, ts, protocol.SeverityInfo, loc, []protocol.ObjectAnalysis{
+	msg := p.NewObjectAnalysesMessage("OBJECT_ANALYSES_ID", event.ID, ts, protocol.SeverityInfo, loc, []protocol.ObjectAnalysis{
 		{
-			ID:      "OBJECT_ANALYSIS_ID",
 			Subject: objects[0],
 			Report:  "OBJECT_ANALYSIS_REPORT",
 		},
@@ -112,9 +111,8 @@ func Test_PlateDetectionProducer(t *testing.T) {
 }
 
 func Test_PlateAnalysisProducer(t *testing.T) {
-	msg := p.NewPlateAnalysisMessage(event.ID, ts, protocol.SeverityWarning, loc, []protocol.PlateAnalysis{
+	msg := p.NewPlateAnalysesMessage("PLATE_ANALYSES_ID", event.ID, ts, protocol.SeverityWarning, loc, []protocol.PlateAnalysis{
 		{
-			ID:      "PLATE_ANALYSIS_ID",
 			Subject: plates[0],
 			Report: protocol.PlateReport{
 				{
@@ -122,15 +120,6 @@ func Test_PlateAnalysisProducer(t *testing.T) {
 					Name:     "LIST_NAME",
 					Severity: protocol.SeverityWarning,
 					Color:    "#00ff44",
-					Vehicles: []protocol.Vehicle{
-						{
-							ID:    "VEHICLE_ID",
-							Plate: "EM322",
-							Brand: "Hyundai",
-							Model: "Solaris",
-							Color: "white",
-						},
-					},
 				},
 			},
 		},

@@ -33,10 +33,10 @@ func NewObjectDetectionMessage(producer Producer, message ObjectDetectionMessage
 
 type ObjectReport interface{}
 type ObjectAnalysis Analysis[ObjectReport, ObjectDetection]
-type ObjectAnalysisMessage AnalysisMessage[ObjectAnalysis]
+type ObjectAnalysesMessage AnalysesMessage[ObjectAnalysis]
 
-func NewObjectAnalysisMessage(producer Producer, message ObjectAnalysisMessage) Message[ObjectAnalysisMessage] {
-	return Message[ObjectAnalysisMessage]{
+func NewObjectAnalysesMessage(producer Producer, message ObjectAnalysesMessage) Message[ObjectAnalysesMessage] {
+	return Message[ObjectAnalysesMessage]{
 		Type:     MessageObjectAnalysis,
 		Producer: producer,
 		Body:     message,
