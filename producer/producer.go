@@ -45,6 +45,9 @@ func (p Producer) NewFrameMessage(ts time.Time, data protocol.Frame, dims protoc
 	})
 }
 
+type DetectionMessage[T any] protocol.Message[protocol.DetectionMessage[T]]
+type AnalysisMessage[T any] protocol.AnalysisMessage[T]
+
 type ObjectDetectionMessage = protocol.Message[protocol.ObjectDetectionMessage]
 
 func (p Producer) NewObjectDetectionMessage(ts time.Time, loc protocol.FrameLocation, objects []protocol.ObjectDetection) ObjectDetectionMessage {
