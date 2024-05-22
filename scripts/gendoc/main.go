@@ -144,17 +144,15 @@ var entities = []any{
 var messages = []any{
 	p.NewMotionDetectionMessage(ts, motions),
 	p.NewObjectDetectionMessage(ts, loc, objects),
-	p.NewObjectAnalysisMessage(event.ID, ts, protocol.SeverityInfo, loc, []protocol.ObjectAnalysis{
+	p.NewObjectAnalysesMessage("OBJECT_ANALYSIS_ID", event.ID, ts, protocol.SeverityInfo, loc, []protocol.ObjectAnalysis{
 		{
-			ID:      "OBJECT_ANALYSIS_ID",
 			Subject: objects[0],
 			Report:  "OBJECT_ANALYSIS_REPORT",
 		},
 	}),
 	p.NewPlateDetectionMessage(ts, loc, plates),
-	p.NewPlateAnalysisMessage(event.ID, ts, protocol.SeverityWarning, loc, []protocol.PlateAnalysis{
+	p.NewPlateAnalysesMessage("PLATE_ANALYSIS_ID", event.ID, ts, protocol.SeverityWarning, loc, []protocol.PlateAnalysis{
 		{
-			ID:      "PLATE_ANALYSIS_ID",
 			Subject: plates[0],
 			Report: protocol.PlateReport{
 				{
@@ -162,7 +160,6 @@ var messages = []any{
 					Name:     "LIST_NAME",
 					Severity: protocol.SeverityWarning,
 					Color:    "#00ff44",
-					Vehicles: vehicles,
 				},
 			},
 		},
@@ -173,11 +170,19 @@ var messages = []any{
 	p.NewMediaMessage(event.ID, recording, media),
 }
 
+var modules = map[protocol.ModuleName]string{
+	protocol.ObjectRecognizer:       "Object recognizer",
+	protocol.LicensePlateRecognizer: "License Plate Recognizer",
+}
+
 var (
 	CRLF = "\r\n"
 
 	MESSAGE_H      = "# Messages\r\n"
 	MESSAGE_TYPE_T = "## Message type: `%s`\r\n\r\n"
+
+	MODULES_H      = "# Modules\r\n"
+	MODULES_TYPE_T = "## Module: `%s` - %s\r\n"
 
 	ENTITY_H      = "# Entities\r\n"
 	ENTITY_TYPE_T = "## Entity type: `%s`\r\n\r\n"
@@ -188,36 +193,51 @@ var (
 	JSON_INDENT = "  "
 )
 
+func WriteMessage(message any) {
+	// Write template
+	out.WriteString(CRLF)
+	t := reflect.ValueOf(message).FieldByName("Type")
+	out.WriteString(fmt.Sprintf(MESSAGE_TYPE_T, t))
+
+	// Write message
+	if bytes, err := json.MarshalIndent(message, "", JSON_INDENT); err != nil {
+		os.Stderr.WriteString(fmt.Sprintf("failed to marshal message(%s): %v\n", t, err))
+	} else {
+		out.WriteString(fmt.Sprintf(CODEBLOCK_T, string(bytes)))
+	}
+}
+
+func WriteEntity(entity any) {
+	out.WriteString(CRLF)
+	t := reflect.ValueOf(entity).Type().String()
+	out.WriteString(fmt.Sprintf(ENTITY_TYPE_T, t))
+
+	// Write message
+	if bytes, err := json.MarshalIndent(entity, "", JSON_INDENT); err != nil {
+		os.Stderr.WriteString(fmt.Sprintf("failed to marshal entity(%s): %v\n", t, err))
+	} else {
+		out.WriteString(fmt.Sprintf(CODEBLOCK_T, string(bytes)))
+	}
+}
+
 func main() {
 
 	out.WriteString(CRLF)
 	out.WriteString(MESSAGE_H)
 	for _, m := range messages {
-		// Write template
-		out.WriteString(CRLF)
-		t := reflect.ValueOf(m).FieldByName("Type")
-		out.WriteString(fmt.Sprintf(MESSAGE_TYPE_T, t))
+		WriteMessage(m)
+	}
 
-		// Write message
-		if bytes, err := json.MarshalIndent(m, "", JSON_INDENT); err != nil {
-			os.Stderr.WriteString(fmt.Sprintf("failed to marshal message(%s): %v\n", t, err))
-		} else {
-			out.WriteString(fmt.Sprintf(CODEBLOCK_T, string(bytes)))
-		}
+	out.WriteString(CRLF)
+	out.WriteString(MODULES_H)
+	for m, description := range modules {
+		out.WriteString(CRLF)
+		out.WriteString(fmt.Sprintf(MODULES_TYPE_T, m, description))
 	}
 
 	out.WriteString(CRLF)
 	out.WriteString(ENTITY_H)
 	for _, e := range entities {
-		out.WriteString(CRLF)
-		t := reflect.ValueOf(e).Type().String()
-		out.WriteString(fmt.Sprintf(ENTITY_TYPE_T, t))
-
-		// Write message
-		if bytes, err := json.MarshalIndent(e, "", JSON_INDENT); err != nil {
-			os.Stderr.WriteString(fmt.Sprintf("failed to marshal entity(%s): %v\n", t, err))
-		} else {
-			out.WriteString(fmt.Sprintf(CODEBLOCK_T, string(bytes)))
-		}
+		WriteEntity(e)
 	}
 }

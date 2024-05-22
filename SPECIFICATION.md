@@ -13,7 +13,7 @@
   },
   "type": "detection.motion",
   "body": {
-    "timestamp": "2024-05-20T15:41:57.504626875+05:00",
+    "timestamp": "2024-05-22T11:57:28.203436491+05:00",
     "detections": [
       {
         "source": {
@@ -47,7 +47,7 @@
   },
   "type": "detection.object",
   "body": {
-    "timestamp": "2024-05-20T15:41:57.504626875+05:00",
+    "timestamp": "2024-05-22T11:57:28.203436491+05:00",
     "frame_location": {
       "partition": 124,
       "offset": 5123512,
@@ -93,8 +93,9 @@
   },
   "type": "analysis.object",
   "body": {
+    "id": "OBJECT_ANALYSIS_ID",
     "event_id": "EVENT_ID",
-    "timestamp": "2024-05-20T15:41:57.504626875+05:00",
+    "timestamp": "2024-05-22T11:57:28.203436491+05:00",
     "severity": "info",
     "frame_location": {
       "partition": 124,
@@ -103,7 +104,6 @@
     },
     "analyses": [
       {
-        "id": "OBJECT_ANALYSIS_ID",
         "report": "OBJECT_ANALYSIS_REPORT",
         "subject": {
           "id": "e422664a-d910-4a75-905c-1fdff28cd876",
@@ -134,7 +134,7 @@
   },
   "type": "detection.plate",
   "body": {
-    "timestamp": "2024-05-20T15:41:57.504626875+05:00",
+    "timestamp": "2024-05-22T11:57:28.203436491+05:00",
     "frame_location": {
       "partition": 124,
       "offset": 5123512,
@@ -178,8 +178,9 @@
   },
   "type": "analysis.plate",
   "body": {
+    "id": "PLATE_ANALYSIS_ID",
     "event_id": "EVENT_ID",
-    "timestamp": "2024-05-20T15:41:57.504626875+05:00",
+    "timestamp": "2024-05-22T11:57:28.203436491+05:00",
     "severity": "warning",
     "frame_location": {
       "partition": 124,
@@ -188,22 +189,12 @@
     },
     "analyses": [
       {
-        "id": "PLATE_ANALYSIS_ID",
         "report": [
           {
             "id": "LIST_ID",
             "name": "LIST_NAME",
             "severity": "warning",
-            "color": "#00ff44",
-            "vehicles": [
-              {
-                "id": "VEHICLE_ID",
-                "plate": "EM322",
-                "brand": "Hyundai",
-                "model": "Solaris",
-                "color": "white"
-              }
-            ]
+            "color": "#00ff44"
           }
         ],
         "subject": {
@@ -234,7 +225,7 @@
   },
   "type": "frame",
   "body": {
-    "timestamp": "2024-05-20T15:41:57.504626875+05:00",
+    "timestamp": "2024-05-22T11:57:28.203436491+05:00",
     "dimensions": {
       "width": 4123,
       "height": 1523
@@ -271,7 +262,7 @@
   "type": "event.start",
   "body": {
     "id": "EVENT_ID",
-    "start": "2024-05-20T15:41:57.504626875+05:00"
+    "start": "2024-05-22T11:57:28.203436491+05:00"
   }
 }
 ```
@@ -289,7 +280,7 @@
   "type": "event.end",
   "body": {
     "id": "EVENT_ID",
-    "end": "2024-05-20T15:41:57.504626875+05:00",
+    "end": "2024-05-22T11:57:28.203436491+05:00",
     "duration": 10000000000
   }
 }
@@ -315,7 +306,7 @@
     "media": [
       {
         "analysis_id": "ANALYSIS_ID",
-        "timestamp": "2024-05-20T15:41:57.504626875+05:00",
+        "timestamp": "2024-05-22T11:57:28.203436491+05:00",
         "file": "object.jpeg",
         "url": "http://localhost:8912/object.jpeg"
       }
@@ -323,6 +314,12 @@
   }
 }
 ```
+
+# Modules
+
+## Module: `OR` - Object recognizer
+
+## Module: `LPR` - License Plate Recognizer
 
 # Entities
 
@@ -411,7 +408,7 @@
 [
   {
     "analysis_id": "ANALYSIS_ID",
-    "timestamp": "2024-05-20T15:41:57.504626875+05:00",
+    "timestamp": "2024-05-22T11:57:28.203436491+05:00",
     "file": "object.jpeg",
     "url": "http://localhost:8912/object.jpeg"
   }
@@ -423,8 +420,8 @@
 ```go
 {
   "id": "EVENT_ID",
-  "start": "2024-05-20T15:41:57.504626875+05:00",
-  "end": "2024-05-20T15:41:57.504626875+05:00",
+  "start": "2024-05-22T11:57:28.203436491+05:00",
+  "end": "2024-05-22T11:57:28.203436491+05:00",
   "duration": 10000000000
 }
 ```
