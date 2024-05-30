@@ -20,7 +20,7 @@ type MediaMessage struct {
 	Media     []Media   `json:"media"`
 }
 
-func NewMediaMessage(producer Producer, message MediaMessage) Message[MediaMessage] {
+func NewMediaMessage(producer Camera, message MediaMessage) Message[MediaMessage] {
 	return Message[MediaMessage]{
 		Producer: producer,
 		Type:     MessageMedia,

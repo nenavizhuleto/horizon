@@ -22,7 +22,7 @@ type EventEndMessage struct {
 	Duration time.Duration `json:"duration"`
 }
 
-func NewEventStartMessage(producer Producer, message EventStartMessage) Message[EventStartMessage] {
+func NewEventStartMessage(producer Camera, message EventStartMessage) Message[EventStartMessage] {
 	return Message[EventStartMessage]{
 		Producer: producer,
 		Type:     MessageEventStart,
@@ -30,7 +30,7 @@ func NewEventStartMessage(producer Producer, message EventStartMessage) Message[
 	}
 }
 
-func NewEventEndMessage(producer Producer, message EventEndMessage) Message[EventEndMessage] {
+func NewEventEndMessage(producer Camera, message EventEndMessage) Message[EventEndMessage] {
 	return Message[EventEndMessage]{
 		Producer: producer,
 		Type:     MessageEventEnd,

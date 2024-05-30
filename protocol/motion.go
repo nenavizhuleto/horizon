@@ -12,7 +12,7 @@ type MotionDetectionMessage struct {
 	Detections []MotionDetection `json:"detections"`
 }
 
-func NewMotionDetectionMessage(producer Producer, message MotionDetectionMessage) Message[MotionDetectionMessage] {
+func NewMotionDetectionMessage(producer Camera, message MotionDetectionMessage) Message[MotionDetectionMessage] {
 	return Message[MotionDetectionMessage]{
 		Producer: producer,
 		Type:     MessageMotionDetection,

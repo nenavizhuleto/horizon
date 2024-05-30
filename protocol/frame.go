@@ -11,7 +11,7 @@ type FrameMessage struct {
 	Data       Frame      `json:"data"`
 }
 
-func NewFrameMessage(producer Producer, message FrameMessage) Message[FrameMessage] {
+func NewFrameMessage(producer Camera, message FrameMessage) Message[FrameMessage] {
 	return Message[FrameMessage]{
 		Producer: producer,
 		Type:     MessageFrame,

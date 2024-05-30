@@ -8,7 +8,11 @@ type PlateDetection struct {
 
 type PlateDetectionMessage DetectionMessage[PlateDetection]
 
-func NewPlateDetectionMessage(producer Producer, message PlateDetectionMessage) Message[PlateDetectionMessage] {
+func (p PlateDetection) Type() MessageType {
+	return MessagePlate
+}
+
+func NewPlateDetectionMessage(producer Camera, message PlateDetectionMessage) Message[PlateDetectionMessage] {
 	return Message[PlateDetectionMessage]{
 		Producer: producer,
 		Type:     MessagePlateDetection,
@@ -35,7 +39,7 @@ type PlateReport []List
 type PlateAnalysis Analysis[PlateReport, PlateDetection]
 type PlateAnalysesMessage AnalysesMessage[PlateAnalysis]
 
-func NewPlateAnalysesMessage(producer Producer, message PlateAnalysesMessage) Message[PlateAnalysesMessage] {
+func NewPlateAnalysesMessage(producer Camera, message PlateAnalysesMessage) Message[PlateAnalysesMessage] {
 	return Message[PlateAnalysesMessage]{
 		Producer: producer,
 		Type:     MessagePlateAnalysis,
