@@ -1,6 +1,8 @@
 package protocol
 
-import "time"
+import (
+	"time"
+)
 
 type FrameLocation struct {
 	Partition int32  `json:"partition"`
