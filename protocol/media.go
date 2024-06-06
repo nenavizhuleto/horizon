@@ -14,16 +14,30 @@ type Media struct {
 	URL        string    `json:"url"`
 }
 
-type MediaMessage struct {
+type MediaMessageBody struct {
 	EventID   string    `json:"event_id"`
 	Recording Recording `json:"recording"`
 	Media     []Media   `json:"media"`
 }
 
-func NewMediaMessage(producer Producer, message MediaMessage) Message[MediaMessage] {
-	return Message[MediaMessage]{
-		Producer: producer,
-		Type:     MessageMedia,
-		Body:     message,
-	}
+func (m MediaMessageBody) Type() MessageType {
+	return MessageMedia
+}
+
+type MediaImageMessageBody struct {
+	EventID string `json:"event_id"`
+	Image   Media  `json:"image"`
+}
+
+func (m MediaImageMessageBody) Type() MessageType {
+	return join(MessageMedia, "image")
+}
+
+type MediaRecordingMessageBody struct {
+	EventID   string    `json:"event_id"`
+	Recording Recording `json:"recording"`
+}
+
+func (m MediaRecordingMessageBody) Type() MessageType {
+	return join(MessageMedia, "recording")
 }

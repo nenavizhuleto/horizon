@@ -7,15 +7,11 @@ type MotionDetection struct {
 	Position Position `json:"position,omitempty"`
 }
 
-type MotionDetectionMessage struct {
+type MotionDetectionMessageBody struct {
 	Timestamp  time.Time         `json:"timestamp"`
 	Detections []MotionDetection `json:"detections"`
 }
 
-func NewMotionDetectionMessage(producer Producer, message MotionDetectionMessage) Message[MotionDetectionMessage] {
-	return Message[MotionDetectionMessage]{
-		Producer: producer,
-		Type:     MessageMotionDetection,
-		Body:     message,
-	}
+func (m MotionDetectionMessageBody) Type() MessageType {
+	return join(MessageDetection, "motion")
 }

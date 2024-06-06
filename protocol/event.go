@@ -27,6 +27,10 @@ type EventStartMessage struct {
 	Status EventStatus `json:"status"`
 }
 
+func (m EventStartMessage) Type() MessageType {
+	return join(MessageEvent, "start")
+}
+
 type EventEndMessage struct {
 	ID       string        `json:"id"`
 	End      time.Time     `json:"end"`
@@ -34,18 +38,6 @@ type EventEndMessage struct {
 	Status   EventStatus   `json:"status"`
 }
 
-func NewEventStartMessage(producer Producer, message EventStartMessage) Message[EventStartMessage] {
-	return Message[EventStartMessage]{
-		Producer: producer,
-		Type:     MessageEventStart,
-		Body:     message,
-	}
-}
-
-func NewEventEndMessage(producer Producer, message EventEndMessage) Message[EventEndMessage] {
-	return Message[EventEndMessage]{
-		Producer: producer,
-		Type:     MessageEventEnd,
-		Body:     message,
-	}
+func (m EventEndMessage) Type() MessageType {
+	return join(MessageEvent, "end")
 }
