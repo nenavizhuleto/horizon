@@ -6,15 +6,13 @@ type PlateDetection struct {
 	Plate       string   `json:"plate"`
 }
 
-type PlateDetectionMessage DetectionMessage[PlateDetection]
-
-func NewPlateDetectionMessage(producer Producer, message PlateDetectionMessage) Message[PlateDetectionMessage] {
-	return Message[PlateDetectionMessage]{
-		Producer: producer,
-		Type:     MessagePlateDetection,
-		Body:     message,
-	}
+func (m PlateDetection) Type() MessageType {
+	return "plate"
 }
+
+type PlateReport []List
+type PlateDetectionMessageBody = DetectionMessageBody[PlateDetection]
+type PlateAnalysesMessageBody = AnalysesMessageBody[PlateReport, PlateDetection]
 
 type Vehicle struct {
 	ID    string `json:"id"`
@@ -29,16 +27,4 @@ type List struct {
 	Name     string   `json:"name"`
 	Severity Severity `json:"severity"`
 	Color    string   `json:"color"`
-}
-
-type PlateReport []List
-type PlateAnalysis Analysis[PlateReport, PlateDetection]
-type PlateAnalysesMessage AnalysesMessage[PlateAnalysis]
-
-func NewPlateAnalysesMessage(producer Producer, message PlateAnalysesMessage) Message[PlateAnalysesMessage] {
-	return Message[PlateAnalysesMessage]{
-		Producer: producer,
-		Type:     MessagePlateAnalysis,
-		Body:     message,
-	}
 }
