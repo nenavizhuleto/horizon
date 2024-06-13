@@ -30,7 +30,7 @@ type MediaImageMessageBody struct {
 }
 
 func (m MediaImageMessageBody) Type() MessageType {
-	return join(MessageMedia, "image")
+	return Join(MessageMedia, "image")
 }
 
 type MediaRecordingMessageBody struct {
@@ -39,5 +39,5 @@ type MediaRecordingMessageBody struct {
 }
 
 func (m MediaRecordingMessageBody) Type() MessageType {
-	return join(MessageMedia, "recording")
+	return Join(MessageMedia, "recording")
 }

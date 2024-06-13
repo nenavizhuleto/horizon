@@ -13,5 +13,5 @@ type MotionDetectionMessageBody struct {
 }
 
 func (m MotionDetectionMessageBody) Type() MessageType {
-	return join(MessageDetection, "motion")
+	return Join(MessageDetection, "motion")
 }

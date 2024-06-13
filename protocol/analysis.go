@@ -36,5 +36,5 @@ type AnalysesMessageBody[R any, S Typable] struct {
 
 func (m AnalysesMessageBody[R, S]) Type() MessageType {
 	var s S
-	return join(MessageAnalysis, s.Type())
+	return Join(MessageAnalysis, s.Type())
 }

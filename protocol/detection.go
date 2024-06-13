@@ -16,5 +16,5 @@ type DetectionMessageBody[D Typable] struct {
 
 func (m DetectionMessageBody[D]) Type() MessageType {
 	var d D
-	return join(MessageDetection, d.Type())
+	return Join(MessageDetection, d.Type())
 }

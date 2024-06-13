@@ -28,7 +28,7 @@ type EventStartMessage struct {
 }
 
 func (m EventStartMessage) Type() MessageType {
-	return join(MessageEvent, "start")
+	return Join(MessageEvent, "start")
 }
 
 type EventEndMessage struct {
@@ -39,5 +39,5 @@ type EventEndMessage struct {
 }
 
 func (m EventEndMessage) Type() MessageType {
-	return join(MessageEvent, "end")
+	return Join(MessageEvent, "end")
 }

@@ -16,22 +16,13 @@ const (
 	MessageAnalysis  = MessageType("analysis")
 )
 
+type RawMessage Message[json.RawMessage]
+
 type Message[B any] struct {
 	Producer Producer    `json:"producer"`
 	Consumer Consumer    `json:"consumer"`
 	Type     MessageType `json:"type"`
 	Body     B           `json:"body"`
-}
-
-type Typable interface {
-	Type() MessageType
-}
-
-func join(types ...MessageType) (result MessageType) {
-	for _, t := range types {
-		result = result + MessageTypeSeparator + t
-	}
-	return
 }
 
 func NewMessage[T Typable](producer Producer, body T) Message[T] {
@@ -41,5 +32,3 @@ func NewMessage[T Typable](producer Producer, body T) Message[T] {
 		Body:     body,
 	}
 }
-
-type RawMessage Message[json.RawMessage]
